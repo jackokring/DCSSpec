@@ -38,11 +38,7 @@ public class MainActivity extends AppCompatActivity {
                 @Override
                 public void onClick(View view) {
                     Object o = la.getItem(position);
-                    /* write you handling code like...
-                    String st = "sdcard/";
-                    File f = new File(st+o.toString());
-                    // do whatever u want to do with 'f' File object
-                    */
+
                 }
             });
             return convertView;
