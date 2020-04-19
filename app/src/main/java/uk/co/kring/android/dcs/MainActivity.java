@@ -2,6 +2,7 @@ package uk.co.kring.android.dcs;
 
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.TextView;
 import androidx.appcompat.app.AppCompatActivity;
@@ -24,13 +25,26 @@ public class MainActivity extends AppCompatActivity {
         // override other abstract methods here
 
         @Override
-        public View getView(int position, View convertView, ViewGroup container) {
+        public View getView(final int position, View convertView, ViewGroup container) {
             if (convertView == null) {
                 convertView = getLayoutInflater().inflate(R.layout.list_item, container, false);
             }
 
             ((TextView) convertView.findViewById(R.id.text_view_id))
                     .setText((String)getItem(position));
+            convertView.setClickable(true);
+            convertView.setOnClickListener(new AdapterView.OnClickListener() {
+
+                @Override
+                public void onClick(View view) {
+                    Object o = la.getItem(position);
+                    /* write you handling code like...
+                    String st = "sdcard/";
+                    File f = new File(st+o.toString());
+                    // do whatever u want to do with 'f' File object
+                    */
+                }
+            });
             return convertView;
         }
 
