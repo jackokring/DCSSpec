@@ -12,12 +12,19 @@ import androidx.core.app.NotificationManagerCompat;
 public class MyService extends Service {
 
     NotificationManagerCompat nm;
+    int codes[];
 
     @Nullable
     @Override
     public IBinder onBind(Intent intent) {
         nm = NotificationManagerCompat.from(getApplicationContext());
+        codes = intent.getIntArrayExtra("codes");
         return null;
+    }
+
+    @Override
+    public int onStartCommand(Intent intent, int flags, int startId) {
+        return super.onStartCommand(intent, flags, startId);
     }
 
     public void notify(String title, String content) {

@@ -19,8 +19,6 @@ public class MainActivity extends AppCompatActivity {
     MyAdapter la = new MyAdapter();
     int codes[] = new int[512];
 
-    NotificationManagerCompat nm;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -31,7 +29,6 @@ public class MainActivity extends AppCompatActivity {
         Intent intent =new Intent(this, MyService.class);
         intent.putExtra("codes", codes);//valid code set
         startService(intent);
-        nm = NotificationManagerCompat.from(getApplicationContext());
     }
 
     class MyAdapter extends BaseAdapter {
@@ -78,21 +75,5 @@ public class MainActivity extends AppCompatActivity {
     protected void onDestroy() {
         stopService(new Intent(this, MyService.class));
         super.onDestroy();
-    }
-
-    public void notify(String title, String content) {
-        //createNotificationChannel();
-        Notification builder = new NotificationCompat.Builder(this,
-                NotificationChannel.DEFAULT_CHANNEL_ID)
-                .setSmallIcon(R.drawable.ic_launcher_foreground)
-                .setContentTitle(title)
-                .setContentText(content)
-                .setStyle(new NotificationCompat.BigTextStyle()
-                        .bigText(content))
-                .setPriority(NotificationCompat.PRIORITY_DEFAULT)
-                .setCategory(NotificationCompat.CATEGORY_MESSAGE)
-                .setGroup("all")
-                .build();
-        nm.notify(title.hashCode(), builder);
     }
 }

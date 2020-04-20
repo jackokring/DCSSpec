@@ -20,7 +20,11 @@
         </activity>
         <service
                 android:name=".MyService"
-                android:enabled="true" />
+                android:enabled="true">
+            <intent-filter>
+                <action android:name=".MyService.ACTION_START"/>
+            </intent-filter>
+        </service>
     </application>
 
 </manifest>
