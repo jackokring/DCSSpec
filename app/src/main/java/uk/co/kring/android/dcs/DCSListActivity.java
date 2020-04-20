@@ -24,7 +24,7 @@ public class DCSListActivity extends AppCompatActivity {
         ((ListView)findViewById(R.id.dcs_list)).setAdapter(la);
         //TODO: make codes
 
-        Intent intent =new Intent(this, MyService.class);
+        Intent intent = new Intent(this, MyService.class);
         intent.putExtra("codes", codes);//valid code set
         startService(intent);
     }

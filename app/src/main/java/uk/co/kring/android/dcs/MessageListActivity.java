@@ -9,10 +9,15 @@ import android.widget.BaseAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.room.Room;
+import uk.co.kring.android.dcs.room.AppDatabase;
+import uk.co.kring.android.dcs.room.UserDao;
 
 public class MessageListActivity extends AppCompatActivity {
 
     MyAdapter la = new MyAdapter();
+
+    AppDatabase db = AppDatabase.getInstance(getApplicationContext());
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

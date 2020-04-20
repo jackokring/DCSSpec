@@ -1,20 +1,21 @@
 package uk.co.kring.android.dcs;
 
-import android.app.Notification;
-import android.app.NotificationChannel;
-import android.app.PendingIntent;
-import android.app.Service;
+import android.app.*;
 import android.content.Intent;
 import android.os.IBinder;
 import androidx.annotation.Nullable;
 import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
 import androidx.core.app.TaskStackBuilder;
+import androidx.room.Room;
+import uk.co.kring.android.dcs.room.AppDatabase;
 
 public class MyService extends Service {
 
     NotificationManagerCompat nm;
     int codes[];
+
+    AppDatabase db = AppDatabase.getInstance(getApplicationContext());
 
     @Nullable
     @Override
