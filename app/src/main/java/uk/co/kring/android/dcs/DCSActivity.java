@@ -3,7 +3,7 @@ package uk.co.kring.android.dcs;
 import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
 
-public class DCSSpecActivity extends AppCompatActivity {
+public class DCSActivity extends AppCompatActivity {
 
     int id;
     int codes[];
@@ -11,7 +11,7 @@ public class DCSSpecActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_detail);
+        setContentView(R.layout.activity_dcs_detail);
         Bundle b = getIntent().getExtras();
         id = b.getInt("id");
         codes = b.getIntArray("codes");

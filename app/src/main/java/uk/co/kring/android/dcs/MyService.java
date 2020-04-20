@@ -2,12 +2,14 @@ package uk.co.kring.android.dcs;
 
 import android.app.Notification;
 import android.app.NotificationChannel;
+import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Intent;
 import android.os.IBinder;
 import androidx.annotation.Nullable;
 import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
+import androidx.core.app.TaskStackBuilder;
 
 public class MyService extends Service {
 
@@ -28,9 +30,18 @@ public class MyService extends Service {
     }
 
     public void notify(String title, String content) {
-        //createNotificationChannel();
+        // Create an Intent for the activity you want to start
+        Intent intent = new Intent(this, MessageActivity.class);
+        intent.putExtra("title", title);
+        // Create the TaskStackBuilder and add the intent, which inflates the back stack
+        TaskStackBuilder stackBuilder = TaskStackBuilder.create(this);
+        stackBuilder.addNextIntentWithParentStack(intent);
+        // Get the PendingIntent containing the entire back stack
+        PendingIntent pIntent = stackBuilder.getPendingIntent(0,
+                PendingIntent.FLAG_UPDATE_CURRENT);
         Notification builder = new NotificationCompat.Builder(this,
                 NotificationChannel.DEFAULT_CHANNEL_ID)
+                .setContentIntent(pIntent)
                 .setSmallIcon(R.drawable.ic_launcher_foreground)
                 .setContentTitle(title)
                 .setContentText(content)
