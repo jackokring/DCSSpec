@@ -1,5 +1,8 @@
 package uk.co.kring.android.dcs;
 
+import android.app.Notification;
+import android.app.NotificationChannel;
+import android.content.Intent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -8,21 +11,30 @@ import android.widget.TextView;
 import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
 import android.widget.BaseAdapter;
+import androidx.core.app.NotificationCompat;
+import androidx.core.app.NotificationManagerCompat;
 
 public class MainActivity extends AppCompatActivity {
 
     MyAdapter la = new MyAdapter();
+    int codes[] = new int[512];
+
+    NotificationManagerCompat nm;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         ((ListView)findViewById(R.id.list_view)).setAdapter(la);
+        //TODO: make codes
+
+        Intent intent =new Intent(this, MyService.class);
+        intent.putExtra("codes", codes);//valid code set
+        startService(intent);
+        nm = NotificationManagerCompat.from(getApplicationContext());
     }
 
-    private class MyAdapter extends BaseAdapter {
-
-        // override other abstract methods here
+    class MyAdapter extends BaseAdapter {
 
         @Override
         public View getView(final int position, View convertView, ViewGroup container) {
@@ -37,8 +49,10 @@ public class MainActivity extends AppCompatActivity {
 
                 @Override
                 public void onClick(View view) {
-                    Object o = la.getItem(position);
-
+                    Intent intent = new Intent(MainActivity.this, DCSSpecActivity.class);
+                    intent.putExtra("id", position);
+                    intent.putExtra("codes", codes);//valid code set
+                    startActivity(intent);
                 }
             });
             return convertView;
@@ -46,7 +60,7 @@ public class MainActivity extends AppCompatActivity {
 
         @Override
         public int getCount() {
-            return 0;
+            return codes.length;
         }
 
         @Override
@@ -56,7 +70,29 @@ public class MainActivity extends AppCompatActivity {
 
         @Override
         public long getItemId(int i) {
-            return 0;
+            return codes[i];
         }
+    }
+
+    @Override
+    protected void onDestroy() {
+        stopService(new Intent(this, MyService.class));
+        super.onDestroy();
+    }
+
+    public void notify(String title, String content) {
+        //createNotificationChannel();
+        Notification builder = new NotificationCompat.Builder(this,
+                NotificationChannel.DEFAULT_CHANNEL_ID)
+                .setSmallIcon(R.drawable.ic_launcher_foreground)
+                .setContentTitle(title)
+                .setContentText(content)
+                .setStyle(new NotificationCompat.BigTextStyle()
+                        .bigText(content))
+                .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+                .setCategory(NotificationCompat.CATEGORY_MESSAGE)
+                .setGroup("all")
+                .build();
+        nm.notify(title.hashCode(), builder);
     }
 }

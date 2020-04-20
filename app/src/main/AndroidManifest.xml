@@ -17,9 +17,10 @@
             </intent-filter>
         </activity>
         <activity android:name=".DCSSpecActivity">
-
-
         </activity>
+        <service
+                android:name=".MyService"
+                android:enabled="true" />
     </application>
 
 </manifest>
