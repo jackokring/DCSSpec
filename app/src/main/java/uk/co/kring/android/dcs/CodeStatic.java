@@ -12,6 +12,8 @@ public class CodeStatic {
     int codes[] = new int[1024];
     int primaries[];
 
+    static final char baud10 = 1343;//134.3Hz
+
     //character translations
     static final char letters[] = {
         '@', 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M',
@@ -35,6 +37,28 @@ public class CodeStatic {
         //r+, r-, g+, g-, b+, b-, up, dn, le, ri, dl,
         //sy, rp, ra, re, ri, rd, ok, un, cq
     //};
+
+    static final char RED_PLUS = 512;
+    static final char RED_MINUS = 513;
+    static final char GREEN_PLUS = 514;
+    static final char GREEN_MINUS = 515;
+    static final char BLUE_PLUS = 516;
+    static final char BLUE_MINUS = 517;
+
+    static final char UP = 518;
+    static final char DOWN = 519;
+    static final char LEFT = 520;
+    static final char RIGHT = 521;
+
+    static final char SYNC_IDLE = 522;
+    static final char REPEAT = 523;
+    static final char REPEAT_ACK = 524;
+    static final char REPEAT_ACK_ERR = 525;
+    static final char RATE_INC = 526;
+    static final char RATE_DEC = 527;
+    static final char RATE_ACCEPT = 528;
+    static final char UN_SYNC = 529;
+    static final char CALL_SIGN = 530;
 
     static final char coctals[] = {
         0205, 0223, 0226, 0243, 0244, 0245, 0251, 0261, 0263, 0265, 0271,
