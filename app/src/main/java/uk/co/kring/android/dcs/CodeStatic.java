@@ -1,5 +1,7 @@
 package uk.co.kring.android.dcs;
 
+import android.util.Base64;
+
 public class CodeStatic {
 
     static CodeStatic p;
@@ -30,7 +32,8 @@ public class CodeStatic {
         0306, 0311, 0315, 0331, 0343, 0346, 0351, 0364, 0365, 0371,
         0411, 0412, 0413, 0423, 0431, 0432, 0445, 0464, 0465, 0466,
         0503, 0506, 0516, 0532, 0546, 0565,
-        0703, 0712, 0723, 0731, 0732, 0734, 0743, 0754
+        0703, 0712, 0723, 0731, 0732, 0734, 0743, 0754,//letters end here
+            0606 //added for base 64 coding as block does not need synchronous idle
     };
 
     //static final int controls[] = {
@@ -65,8 +68,26 @@ public class CodeStatic {
         0606, 0612, 0624, 0627, 0631, 0632, 0654, 0662, 0664
     };
 
+    static final String base64Index =
+            "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
+
     public CodeStatic() {
         genCodes();
+    }
+
+    public byte[] base64Encode(byte[] input) {
+        input = Base64.encode(input, Base64.NO_PADDING | Base64.NO_WRAP);
+        for(int i = 0; i < input.length; ++i) {
+            input[i] = (byte)base64Index.indexOf(input[i]);
+        }
+        return input;
+    }
+
+    public byte[] base64Decode(byte[] input) {//from indexes in octals
+        for(int i = 0; i < input.length; ++i) {
+            input[i] = (byte)base64Index.charAt(input[i]);
+        }
+        return Base64.decode(input, Base64.NO_PADDING | Base64.NO_WRAP);
     }
 
     //CODE GENERATION

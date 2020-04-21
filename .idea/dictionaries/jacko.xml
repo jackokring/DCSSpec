@@ -2,6 +2,8 @@
   <dictionary name="jacko">
     <words>
       <w>kring</w>
+      <w>octals</w>
+      <w>zabcdefghijklmnopqrstuvwxyz</w>
     </words>
   </dictionary>
 </component>
