@@ -7,21 +7,18 @@ import androidx.annotation.Nullable;
 import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
 import androidx.core.app.TaskStackBuilder;
-import androidx.room.Room;
 import uk.co.kring.android.dcs.room.AppDatabase;
 
 public class MyService extends Service {
 
     NotificationManagerCompat nm;
-    int codes[];
-
+    CodeStatic dcs = CodeStatic.getInstance();
     AppDatabase db = AppDatabase.getInstance(getApplicationContext());
 
     @Nullable
     @Override
     public IBinder onBind(Intent intent) {
         nm = NotificationManagerCompat.from(getApplicationContext());
-        codes = intent.getIntArrayExtra("codes");
         return null;
     }
 
