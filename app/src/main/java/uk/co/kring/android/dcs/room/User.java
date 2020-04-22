@@ -12,9 +12,9 @@ public class User {
     @ColumnInfo(name = "name")
     public String name;
 
-    @ColumnInfo(name = "public")
+    @ColumnInfo(name = "pubKey")
     public String pubKey;
 
-    @ColumnInfo(name = "private")
+    @ColumnInfo(name = "priKey")
     public String priKey;
 }

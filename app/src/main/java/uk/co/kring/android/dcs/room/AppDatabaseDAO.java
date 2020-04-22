@@ -8,7 +8,7 @@ import androidx.room.Query;
 import java.util.List;
 
 @Dao
-public interface UserDAO {
+public interface AppDatabaseDAO {
     @Query("SELECT * FROM user")
     List<User> getAll();
 

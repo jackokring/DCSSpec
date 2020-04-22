@@ -8,10 +8,10 @@ import androidx.room.RoomDatabase;
 @Database(entities = {User.class}, version = 1)
 public abstract class AppDatabase extends RoomDatabase {
     static AppDatabase db;
-    public abstract UserDAO userDao();
+    public abstract AppDatabaseDAO appDatabaseDAO();
     public static AppDatabase getInstance(Context c) {
         if(db != null) return db;
         return db = Room.databaseBuilder(c,
-                AppDatabase.class, "dcs").build();
+                AppDatabase.class, "App").build();
     }
 }
