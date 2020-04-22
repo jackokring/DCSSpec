@@ -20,7 +20,7 @@ public class DCSListActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_dcs);
+        setContentView(R.layout.activity_dcs_list);
         ((ListView)findViewById(R.id.dcs_list)).setAdapter(la);
         Intent intent = new Intent(this, MyService.class);
         startService(intent);
@@ -31,7 +31,7 @@ public class DCSListActivity extends AppCompatActivity {
         @Override
         public View getView(final int position, View convertView, ViewGroup container) {
             if (convertView == null) {
-                convertView = getLayoutInflater().inflate(R.layout.dcs_list_item, container,
+                convertView = getLayoutInflater().inflate(R.layout.item_dcs_list, container,
                         false);
             }
 

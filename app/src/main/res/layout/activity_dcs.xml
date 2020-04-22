@@ -5,11 +5,12 @@
         xmlns:app="http://schemas.android.com/apk/res-auto"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        tools:context=".DCSListActivity">
+        tools:context=".DCSActivity">
 
-    <ListView
-            android:id="@+id/dcs_list"
+    <TextView
+            android:id="@+id/dcs_detail"
             android:layout_width="match_parent"
-            android:layout_height="match_parent" />
+            android:layout_height="match_parent"
+            android:text="hello" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

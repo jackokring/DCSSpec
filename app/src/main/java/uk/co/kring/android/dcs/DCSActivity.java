@@ -11,7 +11,7 @@ public class DCSActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_dcs_detail);
+        setContentView(R.layout.activity_dcs);
         Bundle b = getIntent().getExtras();
         id = b.getInt("id");
         codes = b.getIntArray("codes");
