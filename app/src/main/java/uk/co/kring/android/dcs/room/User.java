@@ -11,4 +11,10 @@ public class User {
 
     @ColumnInfo(name = "name")
     public String name;
+
+    @ColumnInfo(name = "public")
+    public String pubKey;
+
+    @ColumnInfo(name = "private")
+    public String priKey;
 }
