@@ -23,7 +23,7 @@ public class CodeStatic {
         "\n'()+,-./\\" +
         "01234567789" +
         ":;<=>?" +
-        " !\"£$%^&";
+        " !\"£$%^&\u020a";
 
     static final char octals[] = {
         023, 025, 026, 031, 032, 043, 047, 051, 054, 065, 071, 072, 073, 074,
@@ -172,5 +172,52 @@ public class CodeStatic {
                 c++;
             }
         }
+    }
+
+    public int RXPrimary(int code) {
+        int rec = codes[code & 1023];
+        if((rec & BITS_23) != code) {
+            //TODO: errors
+        }
+        return rec >> 23;//group index
+    }
+
+    public char RXChar(int code) {
+        int p = RXPrimary(code);
+        for(int i = 0; i < octals.length; ++i) {
+            if(codes[octals[i]] >> 23 == p) return letters.charAt(i);
+        }
+        for(int i = 0; i < coctals.length; ++i) {
+            if(codes[coctals[i]] >> 23 == p) return (char)(512 + i);
+        }
+        return UN_SYNC;//as is an error in spec
+    }
+
+    public int TXChar(char c) {
+        int p = letters.indexOf(c);
+        if(p < 0 || p >= letters.length()) {
+            //not a char but a control
+            c -= 512;
+            return codes[coctals[c]] & BITS_23;
+        } else {
+            return codes[octals[p]] & BITS_23;
+        }
+    }
+
+    public int[] TXBlock(byte[] bytes) {
+        bytes = base64Encode(bytes);
+        int out[] = new int[bytes.length];
+        for(int i = 0; i < out.length; ++i) {
+            out[i] = TXChar(letters.charAt(bytes[i]));
+        }
+        return out;
+    }
+
+    public byte[] RXBlock(int[] code) {
+        byte out[] = new byte[code.length];
+        for(int i = 0; i < out.length; ++i) {
+            out[i] = (byte)letters.indexOf(RXChar(code[i]));
+        }
+        return base64Decode(out);
     }
 }
