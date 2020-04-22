@@ -17,14 +17,13 @@ public class CodeStatic {
     static final char baud10 = 1343;//134.3Hz
 
     //character translations
-    static final char letters[] = {
-        '@', 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M',
-        'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z', '*', '#',
-        '\n', '\'', '(', ')', '+', ',', '-', '.', '/', '\\',
-        '0', '1', '2', '3', '4', '5', '6', '7', '8', '9',
-        ':', ';', '<', '=', '>', '?',
-        ' ', '!', '"', '£', '$', '%', '^', '&'
-    };
+    static final String letters =
+        "@ABCDEFGHIJKLM" +
+        "NOPQRSTUVWXYZ*#" +
+        "\n'()+,-./\\" +
+        "01234567789" +
+        ":;<=>?" +
+        " !\"£$%^&";
 
     static final char octals[] = {
         023, 025, 026, 031, 032, 043, 047, 051, 054, 065, 071, 072, 073, 074,
@@ -75,7 +74,7 @@ public class CodeStatic {
         genCodes();
     }
 
-    public byte[] base64Encode(byte[] input) {
+    public static byte[] base64Encode(byte[] input) {
         input = Base64.encode(input, Base64.NO_PADDING | Base64.NO_WRAP);
         for(int i = 0; i < input.length; ++i) {
             input[i] = (byte)base64Index.indexOf(input[i]);
@@ -83,12 +82,15 @@ public class CodeStatic {
         return input;
     }
 
-    public byte[] base64Decode(byte[] input) {//from indexes in octals
+    public static byte[] base64Decode(byte[] input) {//from indexes in octals
         for(int i = 0; i < input.length; ++i) {
             input[i] = (byte)base64Index.charAt(input[i]);
         }
         return Base64.decode(input, Base64.NO_PADDING | Base64.NO_WRAP);
     }
+
+    static final int BITS_23 = 0x7FFFFF;
+    static final int BAD_MASK = 0x80000000;
 
     //CODE GENERATION
     void genCodes() {
@@ -121,7 +123,7 @@ public class CodeStatic {
             }
             c <<= 12;//SHIFT
             codes[i] += c;
-            codes[i + 512] = (~codes[i]) & 0x8FFFFF;//23 BIT INVERSE
+            codes[1023 - i] = (~codes[i]) & BITS_23;//23 BIT INVERSE
         }
         int c = 0;//BASE GROUP
         for(int i = 0; i < 1024; ++i) {
@@ -136,17 +138,37 @@ public class CodeStatic {
                     continue;//already assigned group
                 }
                 //check same code
-                if(codes[s & 1023] != s) {
+                if((codes[s & 1023] & BITS_23) != s) {
                     continue;//is not same code
                 }
                 codes[i] += (c << 23);//assign same group
             }
         }
+        for(int i = 0; i < 1024; ++i) {
+            codes[i] -= BITS_23 + 1;//map code down one
+        }
         primaries = new int[c];
-        c = 1;
+        c = 0;
         for(int i = 0; i < 1024; ++i) {
             if(codes[i] >> 23 == c) {
-                primaries[c - 1] = i;//look up
+                primaries[c] = i;//look up
+                boolean f = false;
+                if(i >= 512) {
+                    for(int j = 0; j < 512; ++j) {
+                        if(codes[j] >> 23 == c) {
+                            f |= true;//inverse
+                            break;
+                        }
+                    }
+                } else {
+                    for(int j = 0; j < 512; ++j) {
+                        if(codes[j + 512] >> 23 == c) {
+                            f |= true;//inverse
+                            break;
+                        }
+                    }
+                }
+                if(!f) codes[i] += BAD_MASK;//code no inverse
                 c++;
             }
         }

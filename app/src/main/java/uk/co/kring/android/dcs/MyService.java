@@ -40,14 +40,13 @@ public class MyService extends Service {
         Notification builder = new NotificationCompat.Builder(this,
                 NotificationChannel.DEFAULT_CHANNEL_ID)
                 .setContentIntent(pIntent)
-                .setSmallIcon(R.drawable.ic_launcher_foreground)
+                .setSmallIcon(R.drawable.ic_notify)
                 .setContentTitle(title)
                 .setContentText(content)
                 .setStyle(new NotificationCompat.BigTextStyle()
                         .bigText(content))
                 .setPriority(NotificationCompat.PRIORITY_DEFAULT)
                 .setCategory(NotificationCompat.CATEGORY_MESSAGE)
-                .setGroup("all")
                 .build();
         nm.notify(title.hashCode(), builder);
     }
