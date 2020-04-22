@@ -1,6 +1,8 @@
 package uk.co.kring.android.dcs;
 
+import android.Manifest;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -8,22 +10,44 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.TextView;
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
 import android.widget.BaseAdapter;
+import androidx.core.app.ActivityCompat;
 
 public class DCSListActivity extends AppCompatActivity {
 
     MyAdapter la = new MyAdapter();
     CodeStatic dcs = CodeStatic.getInstance();
 
+    // Requesting permission to RECORD_AUDIO
+    public boolean permissionToRecordAccepted = false;
+    private static final int REQUEST_RECORD_AUDIO_PERMISSION = 200;
+    private String permissions[] = { Manifest.permission.RECORD_AUDIO };
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
+                                           @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        switch(requestCode) {
+            case REQUEST_RECORD_AUDIO_PERMISSION:
+                permissionToRecordAccepted = grantResults[0] == PackageManager.PERMISSION_GRANTED;
+                break;
+        }
+        //if(!permissionToRecordAccepted) finish();
+        Intent intent = new Intent(this, MyService.class);
+        intent.putExtra("record", permissionToRecordAccepted);
+        startService(intent);
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_dcs_list);
         ((ListView)findViewById(R.id.dcs_list)).setAdapter(la);
-        Intent intent = new Intent(this, MyService.class);
-        startService(intent);
+        ActivityCompat.requestPermissions(this, permissions,
+                REQUEST_RECORD_AUDIO_PERMISSION);
     }
 
     class MyAdapter extends BaseAdapter {

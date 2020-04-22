@@ -2,9 +2,10 @@ package uk.co.kring.android.dcs.room;
 
 import androidx.room.ColumnInfo;
 import androidx.room.Entity;
+import androidx.room.Index;
 import androidx.room.PrimaryKey;
 
-@Entity
+@Entity(indices = {@Index(value = {"name"})})
 public class User {
     @PrimaryKey(autoGenerate = true)
     public int uid;
