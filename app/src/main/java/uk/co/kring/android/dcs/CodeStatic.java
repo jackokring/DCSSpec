@@ -12,6 +12,7 @@ public class CodeStatic {
     }
 
     int codes[] = new int[1024];
+    byte shifts[] = new byte[1024];//shift future for sync
     int primaries[];
 
     static final char baud10 = 1343;//134.3Hz
@@ -90,6 +91,7 @@ public class CodeStatic {
     }
 
     static final int BITS_23 = 0x7FFFFF;
+    static final int BITS_10 = 1023;
     static final int BAD_MASK = 0x80000000;
 
     //CODE GENERATION
@@ -123,33 +125,36 @@ public class CodeStatic {
             }
             c <<= 12;//SHIFT
             codes[i] += c;
-            codes[1023 - i] = (~codes[i]) & BITS_23;//23 BIT INVERSE
+            codes[BITS_10 - i] = (~codes[i]) & BITS_23;//23 BIT INVERSE
         }
         int c = 0;//BASE GROUP
-        for(int i = 0; i < 1024; ++i) {
+        for(int i = 0; i < BITS_10 + 1; ++i) {
             if(codes[i] >> 23 != 0) {
                 continue;//already assigned group
             }
             int s = codes[i];//current code
             codes[i] += ((++c) << 23);//assign new group
+            shifts[i] = 0;
             for(int j = 0; j < 22; ++j) {
-                s = (s << 1) + (s >> 22);//rotate
-                if(codes[s & 1023] >> 23 != 0) {
+                s = ((s << 1) + (s >> 22)) & BITS_23;//rotate
+                int idx = s & BITS_10;
+                if(codes[idx] >> 23 != 0) {
                     continue;//already assigned group
                 }
                 //check same code
-                if((codes[s & 1023] & BITS_23) != s) {
+                if((codes[idx] & BITS_23) != s) {
                     continue;//is not same code
                 }
-                codes[i] += (c << 23);//assign same group
+                codes[idx] += (c << 23);//assign same group
+                shifts[idx] = (byte)(j + 1);//number of bits to rotate code right
             }
         }
-        for(int i = 0; i < 1024; ++i) {
+        for(int i = 0; i < BITS_10 + 1; ++i) {
             codes[i] -= BITS_23 + 1;//map code down one
         }
         primaries = new int[c];
         c = 0;
-        for(int i = 0; i < 1024; ++i) {
+        for(int i = 0; i < BITS_10 + 1; ++i) {
             if(codes[i] >> 23 == c) {
                 primaries[c] = i;//look up
                 boolean f = false;
@@ -175,11 +180,13 @@ public class CodeStatic {
     }
 
     public int RXPrimary(int code) {
-        int rec = codes[code & 1023];
+        int rec = codes[code & BITS_10];
         if((rec & BITS_23) != code) {
             //TODO: errors
         }
-        return rec >> 23;//group index
+        int idx = rec >> 23;
+        if(idx < 0) return codes[UN_SYNC] >> 23;//un sync code
+        return idx;//group index
     }
 
     public char RXChar(int code) {

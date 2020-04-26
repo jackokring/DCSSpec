@@ -5,7 +5,7 @@ import androidx.room.Entity;
 import androidx.room.Index;
 import androidx.room.PrimaryKey;
 
-@Entity(indices = {@Index(value = {"name"})})
+@Entity(indices = {@Index(value = {"name", "pubKey"})})
 public class User {
     @PrimaryKey(autoGenerate = true)
     public int uid;
