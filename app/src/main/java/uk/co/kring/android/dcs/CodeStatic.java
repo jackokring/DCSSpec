@@ -168,14 +168,14 @@ public class CodeStatic {
                 if(i >= 512) {
                     for(int j = 0; j < 512; ++j) {
                         if(codes[j] >> 23 == c) {
-                            f |= true;//inverse
+                            f = true;//inverse
                             break;
                         }
                     }
                 } else {
                     for(int j = 0; j < 512; ++j) {
                         if(codes[j + 512] >> 23 == c) {
-                            f |= true;//inverse
+                            f = true;//inverse
                             break;
                         }
                     }
@@ -204,7 +204,7 @@ public class CodeStatic {
         for(int i = 0; i < octals.length; ++i) {
             if(codes[octals[i]] >> 23 == p) return letters.substring(i, i + 1);
         }
-        return "UN";//as is an error in spec
+        return "[UN]";//as is an error in current spec
     }
 
     public char RXChar(int code) {//code to @=0 char notation + 512 for controls
