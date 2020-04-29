@@ -41,7 +41,7 @@ public class CodeStatic {
         //sy, rp, ra, re, ri, rd, ok, un, cq
     //};
 
-    static final char RED_PLUS = 512;
+    static final char RED_PLUS = 512;//control code offset 512 in 0 based @
     static final char RED_MINUS = 513;
     static final char GREEN_PLUS = 514;
     static final char GREEN_MINUS = 515;
@@ -54,6 +54,7 @@ public class CodeStatic {
     static final char RIGHT = 521;
 
     static final char SYNC_IDLE = 522;
+    static final char SYNC_OCTAL = 0606;//special to index no char in code
     static final char REPEAT = 523;
     static final char REPEAT_ACK = 524;
     static final char REPEAT_ACK_ERR = 525;
@@ -61,11 +62,17 @@ public class CodeStatic {
     static final char RATE_DEC = 527;
     static final char RATE_ACCEPT = 528;
     static final char UN_SYNC = 529;
+    static final char UN_SYNC_OCTAL = 0662;//special to index code group
     static final char CALL_SIGN = 530;
 
     static final char coctals[] = {
         0205, 0223, 0226, 0243, 0244, 0245, 0251, 0261, 0263, 0265, 0271,
-        0606, 0612, 0624, 0627, 0631, 0632, 0654, 0662, 0664
+        0606, 0612, 0624, 0627, 0631, 0632, 0654, 0662, 0664, 0306 //and LF on end
+    };
+
+    static final String controlStr[] = {
+        "R+", "R-", "G+", "G-", "B+", "B-", "UP", "DWN", "LFT", "RGT", "DEL",
+        "SYN", "RPT", "RAK", "RAE", "RRI", "RRD", "OK", "UN", "CQ", "LF"
     };
 
     static final String base64Index =
@@ -179,17 +186,28 @@ public class CodeStatic {
         }
     }
 
-    public int RXPrimary(int code) {
+    public int RXPrimary(int code) {//code to group
         int rec = codes[code & BITS_10];
         if((rec & BITS_23) != code) {
             //TODO: errors
         }
         int idx = rec >> 23;
-        if(idx < 0) return codes[UN_SYNC] >> 23;//un sync code
+        if(idx < 0) return codes[UN_SYNC_OCTAL] >> 23;//un sync code
         return idx;//group index
     }
 
-    public char RXChar(int code) {
+    public String humanString(int code) {
+        int p = RXPrimary(code);
+        for(int i = 0; i < coctals.length; ++i) {
+            if(codes[coctals[i]] >> 23 == p) return controlStr[i];
+        }
+        for(int i = 0; i < octals.length; ++i) {
+            if(codes[octals[i]] >> 23 == p) return letters.substring(i, i + 1);
+        }
+        return "UN";//as is an error in spec
+    }
+
+    public char RXChar(int code) {//code to @=0 char notation + 512 for controls
         int p = RXPrimary(code);
         for(int i = 0; i < octals.length; ++i) {
             if(codes[octals[i]] >> 23 == p) return letters.charAt(i);
@@ -200,18 +218,21 @@ public class CodeStatic {
         return UN_SYNC;//as is an error in spec
     }
 
-    public int TXChar(char c) {
+    public int TXChar(char c) {//inverse of RXChar
         int p = letters.indexOf(c);
-        if(p < 0 || p >= letters.length()) {
+        if(p < 0 || p >= letters.length() - 1) {
             //not a char but a control
             c -= 512;
+            if(c < 0 || c >= coctals.length - 1) {
+                return codes[SYNC_OCTAL] & BITS_23;//as not transmittable
+            }
             return codes[coctals[c]] & BITS_23;
         } else {
             return codes[octals[p]] & BITS_23;
         }
     }
 
-    public int[] TXBlock(byte[] bytes) {
+    public int[] TXBlock(byte[] bytes) {//UTF-8 to codes
         bytes = base64Encode(bytes);
         int out[] = new int[bytes.length];
         for(int i = 0; i < out.length; ++i) {
@@ -220,7 +241,7 @@ public class CodeStatic {
         return out;
     }
 
-    public byte[] RXBlock(int[] code) {
+    public byte[] RXBlock(int[] code) {//codes to UTF-8
         byte out[] = new byte[code.length];
         for(int i = 0; i < out.length; ++i) {
             out[i] = (byte)letters.indexOf(RXChar(code[i]));
