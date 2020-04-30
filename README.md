@@ -1,6 +1,6 @@
 # DCSSpec
 DCS squelch is a system using a 134.3 baud 23 bit Golay code.
-ThisThis project is to adapt this to a code for data transmission.
+This project is to adapt this to a code for data transmission.
 The basic mode has 63 characters and 20 control codes.
 A more advanced block mode uses a form of base 64 coding to send UTF-8.
 
