@@ -22,10 +22,10 @@ invariant. They can be used to detect signal polarity and hence phase.
 Assuming a regular 15% deviation, in a channel for under 2.5kHz, or 5 DCS channels per VHF channel, the modulation index is very high. This has a very good signal to noise. Along with repeats of selective codes and overall repeat rstes controlling an intrinsic doubling of codes and halving of character rates, long distance on low power should be possible.
 
 ## Laters
-The app is being developed. My PC died. Other things todo and respect to the number 1 of W+/W- oscillation hybrid boson with an asymmetric mass and so an offset centre of null charge and such plus radiative corriolis emission to drift. Also my 13D theory has priority of thought for me. Flat gravity as a quantum intensity of noise conduction is no joke, as is not flat (or black possibly) electromagnetism.
+The app is being developed. My PC died. Other things todo and respect to the number 1 of W+/W- oscillation hybrid boson with an asymmetric mass and so an offset centre of null charge and such plus radiative corriolis emission to drift. Also my 13D theory has priority of thought for me. [Flat gravity](https://github.com/jackokring/DCSSpec/wiki/Flat-Gravity) as a quantum intensity of noise conduction is no joke, as is not flat (or black possibly) electromagnetism.
 
 * AGC avoid by -5, -2.5, 0, +2.5, +5 impulse within band max amplitude control.
-* 3 pole LPF
+* [3/5 pole LPF](https://github.com/jackokring/DCSSpec/wiki/Filters)
 * Non linear SN ratio increase filter.
 * Band 3rd SSB devode by algorithm of amplitude inverse.
 * Through zero FM encode and decode.
