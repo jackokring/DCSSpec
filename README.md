@@ -18,6 +18,9 @@ Any undefined code translates to the code *UN* to indicate non synchronisation.
 The 2 unusable codes are indicated by *NOI* as they are not phase
 invariant. They can be used to detect signal polarity and hence phase.
 
+## FM Bandwidth
+Assuming a regular 15% deviation, in a channel for under 2.5kHz, or 5 DCS channels per VHF channel, the modulation index is very high. This has a very good signal to noise. Along with repeats of selective codes and overall repeat rstes controlling an intrinsic doubling of codes and halving of character rates, long distance on low power should be possible.
+
 ## Under Construction
 
 
