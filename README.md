@@ -21,6 +21,23 @@ invariant. They can be used to detect signal polarity and hence phase.
 ## FM Bandwidth
 Assuming a regular 15% deviation, in a channel for under 2.5kHz, or 5 DCS channels per VHF channel, the modulation index is very high. This has a very good signal to noise. Along with repeats of selective codes and overall repeat rstes controlling an intrinsic doubling of codes and halving of character rates, long distance on low power should be possible.
 
+## Laters
+The app is being developed. My PC died. Other things todo and respect to the number 1 of W+/W- oscillation hybrid boson with an asymmetric mass and so an offset centre of null charge and such plus radiative corriolis emission to drift. Also my 13D theory has priority of thought for me. Flat gravity as a quantum intensity of noise conduction is no joke, as is not flat (or black possibly) electromagnetism.
+
+* AGC avoid by -5, -2.5, 0, +2.5, +5 impulse within band max amplitude control.
+* 3 pole LPF
+* Non linear SN ratio increase filtere.
+* Band 3rd SSB devode by algorithm of amplitude inverse.
+* Through zero FM encode and decode.
+* Harmonic note up/down ring buffer split with post filter.
+* Integral estimator noise reduction.
+* Data compression collection.
+* Messaging and spacetime locatives.
+* DSA signed UTF-8 packets.
+* Topological tree chain history.
+* API lingo loader adapter for feeds.
+* Bluetooth event ping closer nav proxy.
+
 ## Under Construction
 
 
