@@ -26,7 +26,7 @@ The app is being developed. My PC died. Other things todo and respect to the num
 
 * AGC avoid by -5, -2.5, 0, +2.5, +5 impulse within band max amplitude control.
 * 3 pole LPF
-* Non linear SN ratio increase filtere.
+* Non linear SN ratio increase filter.
 * Band 3rd SSB devode by algorithm of amplitude inverse.
 * Through zero FM encode and decode.
 * Harmonic note up/down ring buffer split with post filter.
