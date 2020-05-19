@@ -196,15 +196,36 @@ public class CodeStatic {
         return idx;//group index
     }
 
-    public String humanString(int code) {
+    public String humanStringOfRX(int code) {//map for error correct
         int p = RXPrimary(code);
+        return humanString(p);
+    }
+
+    public String humanString(int code) {//lookup only
         for(int i = 0; i < coctals.length; ++i) {
-            if(codes[coctals[i]] >> 23 == p) return controlStr[i];
+            if(codes[coctals[i]] >> 23 == code) return controlStr[i];
         }
         for(int i = 0; i < octals.length; ++i) {
-            if(codes[octals[i]] >> 23 == p) return letters.substring(i, i + 1);
+            if(codes[octals[i]] >> 23 == code) return letters.substring(i, i + 1);
         }
         return "[UN]";//as is an error in current spec
+    }
+
+    public String alternates(int code) {//from group
+        int c = primaries[code];
+        c = codes[c] >> 23;//group point
+        String s = "";
+        for(int i = 0; i < codes.length; ++i) {
+            if(codes[i] >> 23 == c) {
+                s += String.valueOf(signed(i)) + " ";
+            }
+        }
+        return s;
+    }
+
+    public int signed(int code) {//ones complement octal map
+        if(code < 0) return -signed(~code);
+        return (code & 7) + ((code >> 3) & 7) * 10 + ((code >> 6) & 7) * 100;//octal easy
     }
 
     public char RXChar(int code) {//code to @=0 char notation + 512 for controls

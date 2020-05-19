@@ -59,8 +59,14 @@ public class DCSListActivity extends AppCompatActivity {
                         false);
             }
 
-            ((TextView) convertView.findViewById(R.id.dcs))
-                    .setText((String)getItem(position));
+            ((TextView) convertView.findViewById(R.id.dcs_group))
+                    .setText(String.valueOf(position));
+            ((TextView) convertView.findViewById(R.id.dcs_code))
+                    .setText(String.valueOf(dcs.signed((int)getItemId(position))));
+            ((TextView) convertView.findViewById(R.id.dcs_letter))
+                    .setText(dcs.humanString((int)getItemId(position)));
+            ((TextView) convertView.findViewById(R.id.dcs_members))
+                    .setText(dcs.alternates(position));
             convertView.setClickable(true);
             convertView.setOnClickListener(new AdapterView.OnClickListener() {
 
@@ -81,8 +87,7 @@ public class DCSListActivity extends AppCompatActivity {
         }
 
         @Override
-        public Object getItem(int i) {
-            //TODO: other data?
+        public Object getItem(int i) {//not used
             return null;
         }
 
