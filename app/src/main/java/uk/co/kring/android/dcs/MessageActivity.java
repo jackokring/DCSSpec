@@ -15,5 +15,6 @@ public class MessageActivity extends AppCompatActivity {
         Bundle b = getIntent().getExtras();
         id = b.getInt("id");
         title = b.getString("title");
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);//back
     }
 }

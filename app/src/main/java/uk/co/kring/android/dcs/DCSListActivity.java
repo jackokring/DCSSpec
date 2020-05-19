@@ -62,7 +62,7 @@ public class DCSListActivity extends AppCompatActivity {
             ((TextView) convertView.findViewById(R.id.dcs_group))
                     .setText(String.valueOf(position));
             ((TextView) convertView.findViewById(R.id.dcs_code))
-                    .setText(String.valueOf(dcs.signed((int)getItemId(position))));
+                    .setText(dcs.signed((int)getItemId(position)));
             ((TextView) convertView.findViewById(R.id.dcs_letter))
                     .setText(dcs.humanString((int)getItemId(position)));
             ((TextView) convertView.findViewById(R.id.dcs_members))

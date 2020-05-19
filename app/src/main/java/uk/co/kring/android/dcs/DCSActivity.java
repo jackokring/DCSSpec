@@ -17,13 +17,14 @@ public class DCSActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_dcs);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);//back
         Bundle b = getIntent().getExtras();
         position = b.getInt("id");
 
         ((TextView) findViewById(R.id.dcs_group))
                 .setText(String.valueOf(position));
         ((TextView) findViewById(R.id.dcs_code))
-                .setText(String.valueOf(dcs.signed((int)getItemId(position))));
+                .setText(dcs.signed((int)getItemId(position)));
         ((TextView) findViewById(R.id.dcs_letter))
                 .setText(dcs.humanString((int)getItemId(position)));
         ((TextView) findViewById(R.id.dcs_members))

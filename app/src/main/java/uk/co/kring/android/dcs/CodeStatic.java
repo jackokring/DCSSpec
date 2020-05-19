@@ -201,6 +201,7 @@ public class CodeStatic {
         return humanString(p);
     }
 
+    //TODO: fix so as to use code used, for show.
     public String humanString(int code) {//lookup only
         for(int i = 0; i < coctals.length; ++i) {
             if(codes[coctals[i]] >> 23 == code) return controlStr[i];
@@ -217,15 +218,17 @@ public class CodeStatic {
         String s = "";
         for(int i = 0; i < codes.length; ++i) {
             if(codes[i] >> 23 == c) {
-                s += String.valueOf(signed(i)) + " ";
+                s += signed(i) + " ";
             }
         }
         return s;
     }
 
-    public int signed(int code) {//ones complement octal map
-        if(code > 511) return -signed(~code);
-        return (code & 7) + ((code >> 3) & 7) * 10 + ((code >> 6) & 7) * 100;//octal easy
+    public String signed(int code) {//ones complement octal map
+        if(code > 511) return "-" + signed(~code);
+        code = (code & 7) + ((code >> 3) & 7) * 10 + ((code >> 6) & 7) * 100;//octal easy
+        String s = "000" + String.valueOf(code);
+        return s.substring(s.length() - 3);//3 digit
     }
 
     public char RXChar(int code) {//code to @=0 char notation + 512 for controls
