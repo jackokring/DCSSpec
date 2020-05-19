@@ -187,12 +187,30 @@ public class CodeStatic {
     }
 
     public int RXPrimary(int code) {//code to group
+        int i = RXPrimary(code, 1);
+        if(i >= 0) return i;
+        i = RXPrimary(code, 2);
+        if(i >= 0) return i;
+        i = RXPrimary(code, 3);
+        if(i >= 0) return i;
+        return codes[UN_SYNC_OCTAL] >> 23;//un sync code
+    }
+
+    public int RXPrimary(int code, int nest) {//code to group
         int rec = codes[code & BITS_10];
-        if((rec & BITS_23) != code) {
-            //TODO: errors
-        }
         int idx = rec >> 23;
-        if(idx < 0) return codes[UN_SYNC_OCTAL] >> 23;//un sync code
+        if((rec & BITS_23) != code) {
+            if(nest < 0) {
+                idx = -1;//error
+            } else {
+                for(int i = 0; i < 23; ++i) {
+                    code ^= (1 << i);//bit flip error brute
+                    idx = RXPrimary(code, nest -1);
+                }
+            }
+        } else {
+            if(idx < 0) return codes[UN_SYNC_OCTAL] >> 23;//un sync code
+        }
         return idx;//group index
     }
 
