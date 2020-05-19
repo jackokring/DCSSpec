@@ -59,7 +59,7 @@ public class DCSListActivity extends AppCompatActivity {
                         false);
             }
 
-            ((TextView) convertView.findViewById(R.id.dcs_list_text))
+            ((TextView) convertView.findViewById(R.id.dcs))
                     .setText((String)getItem(position));
             convertView.setClickable(true);
             convertView.setOnClickListener(new AdapterView.OnClickListener() {

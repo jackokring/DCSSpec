@@ -4,7 +4,7 @@
           android:installLocation="preferExternal">
 
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
-    <uses-permission android:name="android.permission.RECORD_AUDIO" />
+    <uses-permission android:name="android.permission.RECORD_AUDIO"/>
 
     <application
             android:allowBackup="true"
@@ -13,24 +13,31 @@
             android:roundIcon="@mipmap/ic_launcher_round"
             android:supportsRtl="true"
             android:theme="@style/AppTheme">
-        <activity android:name=".DCSListActivity"
-                  android:label="@string/dcs_list_activity">
+        <activity android:name=".SurfaceActivity">
+        </activity>
+        <activity
+                android:name=".DCSListActivity"
+                android:label="@string/dcs_list_activity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
+
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
         </activity>
-        <activity android:name=".DCSActivity"
-                  android:label="@string/dcs_activity"
-                  android:parentActivityName=".DCSListActivity">
+        <activity
+                android:name=".DCSActivity"
+                android:label="@string/dcs_activity"
+                android:parentActivityName=".DCSListActivity">
         </activity>
-        <activity android:name=".MessageListActivity"
-                  android:label="@string/message_list_activity"
-                  android:parentActivityName=".DCSListActivity">
+        <activity
+                android:name=".MessageListActivity"
+                android:label="@string/message_list_activity"
+                android:parentActivityName=".DCSListActivity">
         </activity>
-        <activity android:name=".MessageActivity"
-                  android:label="@string/message_activity"
-                  android:parentActivityName=".MessageListActivity">
+        <activity
+                android:name=".MessageActivity"
+                android:label="@string/message_activity"
+                android:parentActivityName=".MessageListActivity">
         </activity>
         <!--
              The API key for Google Maps-based APIs is defined as a string resource.
@@ -49,6 +56,7 @@
                 android:label="@string/maps_activity"
                 android:parentActivityName=".MessageActivity">
         </activity>
+
         <service
                 android:name=".MyService"
                 android:enabled="true">
