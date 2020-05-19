@@ -205,7 +205,11 @@ public class CodeStatic {
             } else {
                 for(int i = 0; i < 23; ++i) {
                     code ^= (1 << i);//bit flip error brute
-                    idx = RXPrimary(code, nest -1);
+                    int j = RXPrimary(code, nest -1);
+                    if(j > idx) {
+                        idx = j;
+                        break;//>= 1
+                    }
                 }
             }
         } else {
