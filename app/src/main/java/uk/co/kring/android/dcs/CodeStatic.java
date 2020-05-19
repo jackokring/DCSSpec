@@ -201,7 +201,6 @@ public class CodeStatic {
         return humanString(p);
     }
 
-    //TODO: fix so as to use code used, for show.
     public String humanString(int code) {//lookup only
         for(int i = 0; i < coctals.length; ++i) {
             if(codes[coctals[i]] >> 23 == code) return controlStr[i];
