@@ -1,0 +1,312 @@
+{
+  "formatVersion": 1,
+  "database": {
+    "version": 1,
+    "identityHash": "b23721b1a45404c02e21ec3a0ddb923c",
+    "entities": [
+      {
+        "tableName": "User",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`uid` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `name` TEXT, `pubKey` TEXT, `priKey` TEXT)",
+        "fields": [
+          {
+            "fieldPath": "uid",
+            "columnName": "uid",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "name",
+            "columnName": "name",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "pubKey",
+            "columnName": "pubKey",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "priKey",
+            "columnName": "priKey",
+            "affinity": "TEXT",
+            "notNull": false
+          }
+        ],
+        "primaryKey": {
+          "columnNames": [
+            "uid"
+          ],
+          "autoGenerate": true
+        },
+        "indices": [
+          {
+            "name": "index_User_name_pubKey",
+            "unique": false,
+            "columnNames": [
+              "name",
+              "pubKey"
+            ],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_User_name_pubKey` ON `${TABLE_NAME}` (`name`, `pubKey`)"
+          }
+        ],
+        "foreignKeys": []
+      },
+      {
+        "tableName": "Message",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`uid` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `madeBy` INTEGER NOT NULL, `location` INTEGER NOT NULL, `text` TEXT, `when` INTEGER NOT NULL)",
+        "fields": [
+          {
+            "fieldPath": "uid",
+            "columnName": "uid",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "madeBy",
+            "columnName": "madeBy",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "location",
+            "columnName": "location",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "text",
+            "columnName": "text",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "when",
+            "columnName": "when",
+            "affinity": "INTEGER",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "columnNames": [
+            "uid"
+          ],
+          "autoGenerate": true
+        },
+        "indices": [
+          {
+            "name": "index_Message_madeBy",
+            "unique": false,
+            "columnNames": [
+              "madeBy"
+            ],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_Message_madeBy` ON `${TABLE_NAME}` (`madeBy`)"
+          },
+          {
+            "name": "index_Message_location_when",
+            "unique": false,
+            "columnNames": [
+              "location",
+              "when"
+            ],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_Message_location_when` ON `${TABLE_NAME}` (`location`, `when`)"
+          },
+          {
+            "name": "index_Message_when_location",
+            "unique": false,
+            "columnNames": [
+              "when",
+              "location"
+            ],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_Message_when_location` ON `${TABLE_NAME}` (`when`, `location`)"
+          }
+        ],
+        "foreignKeys": []
+      },
+      {
+        "tableName": "Location",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`uid` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `address` TEXT, `madeBy` INTEGER NOT NULL, `lat` REAL NOT NULL, `lon` REAL NOT NULL)",
+        "fields": [
+          {
+            "fieldPath": "uid",
+            "columnName": "uid",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "address",
+            "columnName": "address",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "madeBy",
+            "columnName": "madeBy",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "lat",
+            "columnName": "lat",
+            "affinity": "REAL",
+            "notNull": true
+          },
+          {
+            "fieldPath": "lon",
+            "columnName": "lon",
+            "affinity": "REAL",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "columnNames": [
+            "uid"
+          ],
+          "autoGenerate": true
+        },
+        "indices": [
+          {
+            "name": "index_Location_madeBy",
+            "unique": false,
+            "columnNames": [
+              "madeBy"
+            ],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_Location_madeBy` ON `${TABLE_NAME}` (`madeBy`)"
+          },
+          {
+            "name": "index_Location_address_madeBy",
+            "unique": true,
+            "columnNames": [
+              "address",
+              "madeBy"
+            ],
+            "createSql": "CREATE UNIQUE INDEX IF NOT EXISTS `index_Location_address_madeBy` ON `${TABLE_NAME}` (`address`, `madeBy`)"
+          }
+        ],
+        "foreignKeys": []
+      },
+      {
+        "tableName": "Category",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`uid` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `madeBy` INTEGER NOT NULL, `kind` TEXT)",
+        "fields": [
+          {
+            "fieldPath": "uid",
+            "columnName": "uid",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "madeBy",
+            "columnName": "madeBy",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "kind",
+            "columnName": "kind",
+            "affinity": "TEXT",
+            "notNull": false
+          }
+        ],
+        "primaryKey": {
+          "columnNames": [
+            "uid"
+          ],
+          "autoGenerate": true
+        },
+        "indices": [
+          {
+            "name": "index_Category_madeBy",
+            "unique": false,
+            "columnNames": [
+              "madeBy"
+            ],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_Category_madeBy` ON `${TABLE_NAME}` (`madeBy`)"
+          },
+          {
+            "name": "index_Category_kind_madeBy",
+            "unique": true,
+            "columnNames": [
+              "kind",
+              "madeBy"
+            ],
+            "createSql": "CREATE UNIQUE INDEX IF NOT EXISTS `index_Category_kind_madeBy` ON `${TABLE_NAME}` (`kind`, `madeBy`)"
+          }
+        ],
+        "foreignKeys": []
+      },
+      {
+        "tableName": "MessageCategory",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`uid` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `madeBy` INTEGER NOT NULL, `category` INTEGER NOT NULL, `message` INTEGER NOT NULL)",
+        "fields": [
+          {
+            "fieldPath": "uid",
+            "columnName": "uid",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "madeBy",
+            "columnName": "madeBy",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "category",
+            "columnName": "category",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "message",
+            "columnName": "message",
+            "affinity": "INTEGER",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "columnNames": [
+            "uid"
+          ],
+          "autoGenerate": true
+        },
+        "indices": [
+          {
+            "name": "index_MessageCategory_message_category_madeBy",
+            "unique": true,
+            "columnNames": [
+              "message",
+              "category",
+              "madeBy"
+            ],
+            "createSql": "CREATE UNIQUE INDEX IF NOT EXISTS `index_MessageCategory_message_category_madeBy` ON `${TABLE_NAME}` (`message`, `category`, `madeBy`)"
+          },
+          {
+            "name": "index_MessageCategory_category_madeBy",
+            "unique": false,
+            "columnNames": [
+              "category",
+              "madeBy"
+            ],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_MessageCategory_category_madeBy` ON `${TABLE_NAME}` (`category`, `madeBy`)"
+          },
+          {
+            "name": "index_MessageCategory_madeBy_category",
+            "unique": false,
+            "columnNames": [
+              "madeBy",
+              "category"
+            ],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_MessageCategory_madeBy_category` ON `${TABLE_NAME}` (`madeBy`, `category`)"
+          }
+        ],
+        "foreignKeys": []
+      }
+    ],
+    "views": [],
+    "setupQueries": [
+      "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'b23721b1a45404c02e21ec3a0ddb923c')"
+    ]
+  }
+}

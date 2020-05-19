@@ -13,7 +13,7 @@ public class MyService extends Service {
 
     NotificationManagerCompat nm;
     CodeStatic dcs = CodeStatic.getInstance();
-    AppDatabase db = AppDatabase.getInstance(getApplicationContext());
+    AppDatabase db;
     boolean recordPermission;
 
     @Nullable
@@ -21,6 +21,7 @@ public class MyService extends Service {
     public IBinder onBind(Intent intent) {
         nm = NotificationManagerCompat.from(getApplicationContext());
         recordPermission = intent.getBooleanExtra("record", false);
+        db = AppDatabase.getInstance(getApplicationContext());
         return null;
     }
 

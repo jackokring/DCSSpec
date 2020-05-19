@@ -14,13 +14,14 @@ import uk.co.kring.android.dcs.room.AppDatabase;
 public class MessageListActivity extends AppCompatActivity {
 
     MyAdapter la = new MyAdapter();
-    AppDatabase db = AppDatabase.getInstance(getApplicationContext());
+    AppDatabase db;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_dcs_list);
         ((ListView)findViewById(R.id.message_list)).setAdapter(la);
+        db = AppDatabase.getInstance(getApplicationContext());
         //TODO: ?
     }
 

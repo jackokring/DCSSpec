@@ -224,7 +224,7 @@ public class CodeStatic {
     }
 
     public int signed(int code) {//ones complement octal map
-        if(code < 0) return -signed(~code);
+        if(code > 511) return -signed(~code);
         return (code & 7) + ((code >> 3) & 7) * 10 + ((code >> 6) & 7) * 100;//octal easy
     }
 
