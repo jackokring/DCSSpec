@@ -230,6 +230,7 @@ public class CodeStatic {
         for(int i = 0; i < octals.length; ++i) {
             if(codes[octals[i]] >> 23 == code) return letters.substring(i, i + 1);
         }
+        if(codes[code & BITS_10] < 0) return "[NI]";//no inverse
         return "[UN]";//as is an error in current spec
     }
 

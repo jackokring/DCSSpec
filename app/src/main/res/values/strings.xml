@@ -5,5 +5,8 @@
     <string name="dcs_activity">DCS Details</string>
     <string name="message_list_activity">Message List</string>
     <string name="message_activity">Message Details</string>
+    <string name="messages">Messages</string>
+    <string name="surface_activity">Communication</string>
+    <string name="communicate">Communicate</string>
     <string name="google_maps_key">null</string>
 </resources>

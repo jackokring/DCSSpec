@@ -115,4 +115,10 @@ public class DCSListActivity extends AppCompatActivity {
                 MessageListActivity.class);
         startActivity(intent);
     }
+
+    public void onShowCommunicateAction(MenuItem item) {
+        Intent intent = new Intent(DCSListActivity.this,
+                SurfaceActivity.class);
+        startActivity(intent);
+    }
 }

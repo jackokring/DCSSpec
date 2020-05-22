@@ -20,6 +20,7 @@ public class MessageListActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_dcs_list);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);//back
         ((ListView)findViewById(R.id.message_list)).setAdapter(la);
         db = AppDatabase.getInstance(getApplicationContext());
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);//back

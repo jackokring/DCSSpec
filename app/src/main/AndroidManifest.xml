@@ -13,7 +13,9 @@
             android:roundIcon="@mipmap/ic_launcher_round"
             android:supportsRtl="true"
             android:theme="@style/AppTheme">
-        <activity android:name=".SurfaceActivity">
+        <activity android:name=".SurfaceActivity"
+                  android:label="@string/surface_activity"
+                  android:parentActivityName=".DCSListActivity">
         </activity>
         <activity
                 android:name=".DCSListActivity"

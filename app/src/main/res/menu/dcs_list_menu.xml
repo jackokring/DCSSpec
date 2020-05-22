@@ -5,6 +5,13 @@
             android:icon="@drawable/ic_notify"
             app:showAsAction="ifRoom|withText"
             android:onClick="onShowMessagesAction"
-            android:title="Messages">
+            android:title="@string/messages">
+    </item>
+    <item
+            android:id="@+id/menu_action_communicate"
+            android:icon="@drawable/ic_communicate"
+            app:showAsAction="ifRoom|withText"
+            android:onClick="onShowCommunicateAction"
+            android:title="@string/messages">
     </item>
 </menu>
