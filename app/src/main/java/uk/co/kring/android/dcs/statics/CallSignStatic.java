@@ -7,7 +7,7 @@ import java.security.spec.InvalidKeySpecException;
 import java.security.spec.PKCS8EncodedKeySpec;
 import java.security.spec.X509EncodedKeySpec;
 
-public class CallSign {
+public class CallSignStatic {
 
     public static KeyPair getKeys() throws NoSuchAlgorithmException {
         // Generate a 1024-bit

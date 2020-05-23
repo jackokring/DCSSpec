@@ -13,7 +13,7 @@ public class CodeStatic {
 
     int codes[] = new int[1024];
     byte shifts[] = new byte[1024];//shift future for sync
-    int primaries[];
+    public int primaries[];
 
     static final char baud10 = 1343;//134.3Hz
 

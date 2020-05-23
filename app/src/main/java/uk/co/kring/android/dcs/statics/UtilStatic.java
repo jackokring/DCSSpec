@@ -7,22 +7,19 @@ import uk.co.kring.android.dcs.R;
 
 public class UtilStatic {
 
-    public static void dialog(Context here) {
+    @SuppressWarnings("deprecation")
+    public static void dialog(Context here, int title, int icon, String text,
+                              DialogInterface.OnClickListener ok,
+                              DialogInterface.OnClickListener cancel,
+                              DialogInterface.OnClickListener more) {
         AlertDialog.Builder builder = new AlertDialog.Builder(here);
-        builder.setTitle("Test dialog");
-        builder.setIcon(R.drawable.ic_launcher_foreground);
-        builder.setMessage("Content");
-        builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int whichButton) {
-                //Do something
-                dialog.dismiss();
-            }
-        });
-        builder.setNegativeButton("Close", new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int whichButton) {
-                dialog.dismiss();
-            }
-        });
+        builder.setTitle(here.getString(title));
+        builder.setIcon(here.getResources().getDrawable(icon));
+        builder.setMessage(text);
+        if(ok != null) builder.setPositiveButton(R.string.ok, ok);
+        if(cancel != null) builder.setNegativeButton(R.string.cancel, cancel);
+        if(more != null) builder.setNeutralButton(R.string.more, more);
+
         AlertDialog alert = builder.create();
         //alert.getWindow().setType(WindowManager.LayoutParams.TYPE_SYSTEM_ALERT);
         alert.show();

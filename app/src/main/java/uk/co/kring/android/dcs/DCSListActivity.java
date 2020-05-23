@@ -1,6 +1,7 @@
 package uk.co.kring.android.dcs;
 
 import android.Manifest;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.view.Menu;
@@ -16,6 +17,7 @@ import android.os.Bundle;
 import android.widget.BaseAdapter;
 import androidx.core.app.ActivityCompat;
 import uk.co.kring.android.dcs.statics.CodeStatic;
+import uk.co.kring.android.dcs.statics.UtilStatic;
 
 public class DCSListActivity extends AppCompatActivity {
 
@@ -121,5 +123,22 @@ public class DCSListActivity extends AppCompatActivity {
         Intent intent = new Intent(DCSListActivity.this,
                 SurfaceActivity.class);
         startActivity(intent);
+    }
+
+    public void onShowSettingsAction(MenuItem item) {
+        Intent intent = new Intent(DCSListActivity.this,
+                SettingsActivity.class);
+        startActivity(intent);
+    }
+
+    public void onShowAboutAction(MenuItem item) {
+        UtilStatic.dialog(this, R.string.about_title,
+                R.drawable.ic_about,
+                getString(R.string.about) + getString(R.string.version),
+                new DialogInterface.OnClickListener() {//ok
+                    public void onClick(DialogInterface dialog, int whichButton) {
+                        dialog.dismiss();
+                    }
+                }, null, null);
     }
 }

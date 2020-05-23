@@ -21,4 +21,11 @@
             android:onClick="onShowSettingsAction"
             android:title="@string/settings_activity">
     </item>
+    <item
+            android:id="@+id/menu_action_about"
+            android:icon="@drawable/ic_about"
+            app:showAsAction="ifRoom|withText"
+            android:onClick="onShowAboutAction"
+            android:title="@string/about_title">
+    </item>
 </menu>

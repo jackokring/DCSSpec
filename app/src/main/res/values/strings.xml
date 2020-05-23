@@ -1,4 +1,5 @@
 <resources>
+    <string name="version">1.0.0</string>
     <string name="app_name">DCS</string>
     <string name="maps_activity">Location</string>
     <string name="dcs_list_activity">DCS List</string>
@@ -11,6 +12,15 @@
     <string name="google_maps_key">null</string>
     <string name="settings_activity">Settings</string>
     <string name="web_activity">Information</string>
+
+    <!-- Dialog Buttons -->
+    <string name="ok">OK</string>
+    <string name="cancel">Cancel</string>
+    <string name="more">More</string>
+
+    <!-- About -->
+    <string name="about_title">About</string>
+    <string name="about">DCS by K Ring Technologies Ltd. Version </string>
 
     <!-- Preference Titles -->
     <string name="messages_header">Messages</string>
