@@ -1,11 +1,9 @@
 package uk.co.kring.android.dcs;
 
-import android.content.Intent;
-import android.view.View;
-import android.widget.AdapterView;
 import android.widget.TextView;
 import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
+import uk.co.kring.android.dcs.statics.CodeStatic;
 
 public class DCSActivity extends AppCompatActivity {
 

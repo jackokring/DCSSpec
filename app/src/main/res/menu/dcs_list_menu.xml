@@ -14,4 +14,11 @@
             android:onClick="onShowCommunicateAction"
             android:title="@string/messages">
     </item>
+    <item
+            android:id="@+id/menu_action_settings"
+            android:icon="@drawable/ic_settings"
+            app:showAsAction="ifRoom|withText"
+            android:onClick="onShowSettingsAction"
+            android:title="@string/settings_activity">
+    </item>
 </menu>

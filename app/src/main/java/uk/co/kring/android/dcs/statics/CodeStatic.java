@@ -1,4 +1,4 @@
-package uk.co.kring.android.dcs;
+package uk.co.kring.android.dcs.statics;
 
 import android.util.Base64;
 

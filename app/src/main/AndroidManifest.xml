@@ -5,6 +5,7 @@
 
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
     <uses-permission android:name="android.permission.RECORD_AUDIO"/>
+    <uses-permission android:name="android.permission.INTERNET"/>
 
     <application
             android:allowBackup="true"
@@ -13,9 +14,19 @@
             android:roundIcon="@mipmap/ic_launcher_round"
             android:supportsRtl="true"
             android:theme="@style/AppTheme">
-        <activity android:name=".SurfaceActivity"
-                  android:label="@string/surface_activity"
-                  android:parentActivityName=".DCSListActivity">
+        <activity android:name=".WebActivity"
+                  android:label="@string/web_activity"
+                  android:parentActivityName=".MessageListActivity">
+        </activity>
+        <activity
+                android:name=".SettingsActivity"
+                android:label="@string/settings_activity"
+                android:parentActivityName=".DCSListActivity">
+        </activity>
+        <activity
+                android:name=".SurfaceActivity"
+                android:label="@string/surface_activity"
+                android:parentActivityName=".DCSListActivity">
         </activity>
         <activity
                 android:name=".DCSListActivity"

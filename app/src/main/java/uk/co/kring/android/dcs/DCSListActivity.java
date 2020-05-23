@@ -15,6 +15,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
 import android.widget.BaseAdapter;
 import androidx.core.app.ActivityCompat;
+import uk.co.kring.android.dcs.statics.CodeStatic;
 
 public class DCSListActivity extends AppCompatActivity {
 

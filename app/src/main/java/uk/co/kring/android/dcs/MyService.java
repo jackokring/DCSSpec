@@ -1,13 +1,16 @@
 package uk.co.kring.android.dcs;
 
 import android.app.*;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.IBinder;
+import android.view.WindowManager;
 import androidx.annotation.Nullable;
 import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
 import androidx.core.app.TaskStackBuilder;
 import uk.co.kring.android.dcs.room.AppDatabase;
+import uk.co.kring.android.dcs.statics.CodeStatic;
 
 public class MyService extends Service {
 
