@@ -9,22 +9,32 @@ import android.webkit.*;
 import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 public class WebActivity extends AppCompatActivity {
+
+    SwipeRefreshLayout swipeRefreshLayout;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_web);
-        WebView myWebView = (WebView) findViewById(R.id.web_view);
+        final WebView webView = (WebView) findViewById(R.id.web_view);
 
-        WebSettings webSettings = myWebView.getSettings();
+        WebSettings webSettings = webView.getSettings();
         webSettings.setJavaScriptEnabled(true);
         webSettings.setUserAgentString(getResources().getString(R.string.app_name));
-        myWebView.addJavascriptInterface(new WebAppInterface(this), "Android");
-        myWebView.setWebViewClient(new WebAppViewClient());
+        webView.addJavascriptInterface(new WebAppInterface(this), "Android");
+        webView.setWebViewClient(new WebAppViewClient());
+        swipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.swipeRefreshLayout);
+        swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                webView.reload();
+            }
+        });
 
-        //myWebView.loadUrl("http://www.example.com");
+        webView.loadUrl("file:///android_asset/index.html");
     }
 
     public class WebAppViewClient extends WebViewClient {
