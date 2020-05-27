@@ -6,7 +6,6 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Build;
 import android.webkit.*;
-import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
@@ -68,9 +67,9 @@ public class WebActivity extends AppCompatActivity {
         }
 
         /** Show a toast from the web page */
-        @JavascriptInterface
-        public void showToast(String toast) {
+        //@JavascriptInterface
+        /* public void showToast(String toast) {
             Toast.makeText(mContext, toast, Toast.LENGTH_SHORT).show();
-        }
+        } */
     }
 }

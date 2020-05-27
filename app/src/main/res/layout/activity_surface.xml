@@ -6,10 +6,8 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         tools:context=".SurfaceActivity">
-
-    <SurfaceView
-            android:layout_width="0dp"
-            android:layout_height="0dp" android:id="@+id/surfaceView"
-            app:layout_constraintBottom_toBottomOf="parent" app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintEnd_toEndOf="parent" app:layout_constraintStart_toStartOf="parent"/>
+    <uk.co.kring.android.dcs.MySurface
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" android:id="@+id/surfaceView"
+            />
 </androidx.constraintlayout.widget.ConstraintLayout>
