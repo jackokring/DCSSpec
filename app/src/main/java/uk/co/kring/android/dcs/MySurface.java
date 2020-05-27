@@ -71,6 +71,7 @@ public class MySurface extends SurfaceView implements Callback {
         drawing.drawRect(x, y, x + UtilStatic.width,
                 y + UtilStatic.height, bg);
         drawing.drawBitmap(font[ch], x, y, blend);
+        invalidate();
     }
 
     public float x(float x) {//bmp px to width
