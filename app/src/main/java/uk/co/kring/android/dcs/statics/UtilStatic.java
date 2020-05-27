@@ -45,8 +45,8 @@ public class UtilStatic {
     }
 
     static Bitmap f;
-    final static int width = 8;
-    final static int height = 10;
+    public final static int width = 8;
+    public final static int height = 10;
 
     public static Bitmap getCharBitmap(char ch) {
         Bitmap b = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
