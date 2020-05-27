@@ -16,6 +16,7 @@ public class MySurface extends SurfaceView implements Callback {
     Canvas drawing;
     Paint blend = new Paint();
     Paint bg = new Paint();
+    Rect screenRect, viewRect;
 
     public MySurface(Context context) {
         super(context);
@@ -26,8 +27,10 @@ public class MySurface extends SurfaceView implements Callback {
             drawing = new Canvas(screen);
             font = UtilStatic.getChars();
             bg.setStyle(Paint.Style.FILL);//fill backgrounds
+            screenRect = new Rect(0, 0, screen.getWidth(), screen.getHeight());
+            viewRect = new Rect(0, 0, getWidth(), getHeight());
         } catch(Exception e) {
-            //error
+            throw new ActivityException(e);
         }
     }
 
@@ -52,14 +55,19 @@ public class MySurface extends SurfaceView implements Callback {
 
     @Override
     protected void onDraw(Canvas canvas) {
-        Rect copyRect = new Rect(0, 0, screen.getWidth(), screen.getHeight());
-        canvas.drawBitmap(screen, copyRect,
-                new Rect(0, 0, getWidth(), getHeight()), null);
+        canvas.drawBitmap(screen, screenRect,
+                viewRect, null);
+    }
+
+    @Override
+    public boolean performClick() {
+        return super.performClick();
     }
 
     @Override
     public boolean onTouchEvent(MotionEvent event) {
         return super.onTouchEvent(event);
+        //perform click?
     }
 
     public void charAt(char ch, float x, float y, int fColor, int bColor) {
@@ -72,6 +80,58 @@ public class MySurface extends SurfaceView implements Callback {
                 y + UtilStatic.height, bg);
         drawing.drawBitmap(font[ch], x, y, blend);
         invalidate();
+    }
+
+    public static class AttributeMap {
+        public int foreground(int i) {
+            return Color.WHITE;
+        }
+
+        public int background(int i) {
+            return Color.BLACK;
+        }
+    }
+
+    public void stringAt(String s, float x, float y, AttributeMap color) {
+        if(color == null) color = new AttributeMap();
+        for(int i = 0; i < s.length(); ++i) {
+            charAt(s.charAt(i), x, y, color.foreground(i), color.background(i));
+            if(x > screen.getWidth() / (float)UtilStatic.width) {
+                x = 0F;
+                y += UtilStatic.height;//next line LF
+            }
+        }
+    }
+
+    public StringBuilder justify(String s, boolean right, int size, char ch) {
+        if(s == null) s = "";
+        StringBuilder sb = new StringBuilder();
+        if(right) {
+            if(s.length() > size) {
+                sb.append(s);
+            } else {
+                while(size - sb.length() > s.length()) sb.append(ch);
+                sb.append(s);
+            }
+        } else {
+            sb.append(s);
+            while(sb.length() < size) sb.append(ch);
+        }
+        return sb;
+    }
+
+    public int getSizeChars() {
+        return screen.getWidth() / UtilStatic.width *
+                screen.getHeight() / UtilStatic.height;
+    }
+
+    public void stringAtClear(String s, AttributeMap color) {
+        s = justify(s, false, getSizeChars(), ' ').toString();
+        stringAt(s, 0F, 0F, color);//new page
+    }
+
+    public void stringAtClear(StringBuffer s, AttributeMap color) {//internal quick
+        stringAt(s.toString(), 0F, 0F, color);//new page
     }
 
     public float x(float x) {//bmp px to width
