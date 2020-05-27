@@ -9,7 +9,6 @@
     <string name="messages">Messages</string>
     <string name="surface_activity">Communication</string>
     <string name="communicate">Communicate</string>
-    <string name="google_maps_key">null</string>
     <string name="settings_activity">Settings</string>
     <string name="web_activity">Information</string>
 
