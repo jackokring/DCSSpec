@@ -55,6 +55,8 @@ public class MySurface extends SurfaceView implements Callback {
 
     @Override
     protected void onDraw(Canvas canvas) {
+        bg.setColor(Color.BLACK);
+        canvas.drawRect(viewRect, bg);
         canvas.drawBitmap(screen, screenRect,
                 viewRect, null);
     }
