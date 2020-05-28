@@ -1,6 +1,8 @@
 package uk.co.kring.android.dcs.statics;
 
+import android.app.Activity;
 import android.app.AlertDialog;
+import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.graphics.Bitmap;
@@ -8,6 +10,12 @@ import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Rect;
 import android.widget.Toast;
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.GoogleApiAvailability;
+import com.google.android.gms.common.api.GoogleApi;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import uk.co.kring.android.dcs.ActivityException;
 import uk.co.kring.android.dcs.R;
 
 import java.io.IOException;
@@ -64,5 +72,30 @@ public class UtilStatic {
             arr[i] = getCharBitmap(i);
         }
         return arr;//font array
+    }
+
+    static GoogleApiAvailability google;
+
+    public static GoogleApiAvailability googleAPI() {
+        return google;
+    }
+
+    public static void googleAPICheck(Activity c) {
+        GoogleApiAvailability g = GoogleApiAvailability.getInstance();
+        int status;
+        if((status = g.isGooglePlayServicesAvailable(c)) != ConnectionResult.SUCCESS) {
+            g.makeGooglePlayServicesAvailable(c)
+                .addOnFailureListener(c, new OnFailureListener() {
+                    @Override
+                    public void onFailure(Exception e) {
+                        g.getErrorDialog(c, status, 1).show();
+                    }
+                }).addOnSuccessListener(c, new OnSuccessListener() {
+                    @Override
+                    public void onSuccess(Object o) {
+                        google = g;
+                    }
+                });
+        }
     }
 }
