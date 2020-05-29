@@ -111,8 +111,8 @@ public class UtilStatic {
 
     static GoogleApiAvailability google;
 
-    public static GoogleApiAvailability googleAPI() {
-        return google;
+    public static boolean googleAPI() {
+        return google != null;
     }
 
     public static void googleAPICheck(Activity c) {

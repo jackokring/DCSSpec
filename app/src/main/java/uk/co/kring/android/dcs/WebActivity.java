@@ -23,7 +23,9 @@ public class WebActivity extends AppCompatActivity {
         WebSettings webSettings = webView.getSettings();
         webSettings.setJavaScriptEnabled(true);
         webSettings.setUserAgentString(getResources().getString(R.string.app_name));
-        webView.addJavascriptInterface(new WebAppInterface(this), "Android");
+        webView.addJavascriptInterface(new WebAppInterface(this),
+                getResources().getString(R.string.app_name)
+                        .replace(" ", "_"));//no change C case
         webView.setWebViewClient(new WebAppViewClient());
         swipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.swipeRefreshLayout);
         swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {

@@ -16,6 +16,6 @@ public class User {
     @ColumnInfo(name = "pubKey")
     public String pubKey;
 
-    @ColumnInfo(name = "priKey")
-    public String priKey;
+    /* @ColumnInfo(name = "priKey")
+    public String priKey; */
 }
