@@ -4,6 +4,7 @@ import android.app.*;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
@@ -15,8 +16,12 @@ import androidx.core.app.TaskStackBuilder;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
 import com.google.android.gms.common.api.GoogleApi;
+import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.remoteconfig.FirebaseRemoteConfig;
+import com.google.firebase.remoteconfig.FirebaseRemoteConfigSettings;
 import uk.co.kring.android.dcs.ActivityException;
 import uk.co.kring.android.dcs.MessageActivity;
 import uk.co.kring.android.dcs.R;
@@ -129,8 +134,43 @@ public class UtilStatic {
                     @Override
                     public void onSuccess(Object o) {
                         google = g;
+                        fetchRemoteConfig(c);
                     }
                 });
         }
+    }
+
+    static FirebaseRemoteConfig config;
+
+    public static void fetchRemoteConfig(Activity here) {
+        FirebaseRemoteConfig rc = FirebaseRemoteConfig.getInstance();
+        FirebaseRemoteConfigSettings configSettings =
+            new FirebaseRemoteConfigSettings.Builder()
+            .setMinimumFetchIntervalInSeconds(3600 * 24)
+            .build();
+        rc.setConfigSettingsAsync(configSettings);
+        rc.fetchAndActivate()
+            .addOnCompleteListener(here, new OnCompleteListener<Boolean>() {
+                @Override
+                public void onComplete(Task<Boolean> task) {
+                    config = rc;
+                }
+            });
+    }
+
+    public static String pref(Context c, String key, String unset) {
+        SharedPreferences sp = c.getSharedPreferences(
+                c.getString(R.string.app_name), Context.MODE_PRIVATE);
+        String chan9;
+        if((chan9 = (pref(c, "!" + key,null))) != null) {
+            return chan9;
+        } else {
+            return sp.getString(key, getPref(key, unset));
+        }
+    }
+
+    public static String getPref(String key, String unset) {
+        if(config != null) return config.getString(key);
+        return unset;
     }
 }
