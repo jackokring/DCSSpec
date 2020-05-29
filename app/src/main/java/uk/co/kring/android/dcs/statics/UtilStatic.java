@@ -15,14 +15,12 @@ import androidx.core.app.NotificationManagerCompat;
 import androidx.core.app.TaskStackBuilder;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
-import com.google.android.gms.common.api.GoogleApi;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.remoteconfig.FirebaseRemoteConfig;
 import com.google.firebase.remoteconfig.FirebaseRemoteConfigSettings;
-import uk.co.kring.android.dcs.ActivityException;
 import uk.co.kring.android.dcs.MessageActivity;
 import uk.co.kring.android.dcs.R;
 
@@ -169,7 +167,7 @@ public class UtilStatic {
         }
     }
 
-    public static String getPref(String key, String unset) {
+    static String getPref(String key, String unset) {
         if(config != null) return config.getString(key);
         return unset;
     }
