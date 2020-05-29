@@ -13,6 +13,7 @@ import android.widget.Toast;
 import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
 import androidx.core.app.TaskStackBuilder;
+import androidx.preference.PreferenceManager;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -140,7 +141,7 @@ public class UtilStatic {
 
     static FirebaseRemoteConfig config;
 
-    public static void fetchRemoteConfig(Activity here) {
+    static void fetchRemoteConfig(Activity here) {
         FirebaseRemoteConfig rc = FirebaseRemoteConfig.getInstance();
         FirebaseRemoteConfigSettings configSettings =
             new FirebaseRemoteConfigSettings.Builder()
@@ -157,17 +158,16 @@ public class UtilStatic {
     }
 
     public static String pref(Context c, String key, String unset) {
-        SharedPreferences sp = c.getSharedPreferences(
-                c.getString(R.string.app_name), Context.MODE_PRIVATE);
+        SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(c);
         String chan9;
-        if((chan9 = (pref(c, "!" + key,null))) != null) {
+        if((chan9 = getPrefRemote("!" + key,null)) != null) {//override
             return chan9;
         } else {
-            return sp.getString(key, getPref(key, unset));
+            return sp.getString(key, getPrefRemote(key, unset));
         }
     }
 
-    static String getPref(String key, String unset) {
+    static String getPrefRemote(String key, String unset) {
         if(config != null) return config.getString(key);
         return unset;
     }
