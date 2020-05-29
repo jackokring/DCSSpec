@@ -1,25 +1,30 @@
 package uk.co.kring.android.dcs.statics;
 
-import android.app.Activity;
-import android.app.AlertDialog;
-import android.app.Dialog;
+import android.app.*;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Rect;
 import android.widget.Toast;
+import androidx.core.app.NotificationCompat;
+import androidx.core.app.NotificationManagerCompat;
+import androidx.core.app.TaskStackBuilder;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
 import com.google.android.gms.common.api.GoogleApi;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import uk.co.kring.android.dcs.ActivityException;
+import uk.co.kring.android.dcs.MessageActivity;
 import uk.co.kring.android.dcs.R;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Iterator;
+import java.util.Map;
 
 public class UtilStatic {
 
@@ -43,6 +48,36 @@ public class UtilStatic {
 
     public static void toast(Context here, String toast) {
         Toast.makeText(here, toast, Toast.LENGTH_SHORT).show();
+    }
+
+    public static void notify(String title, Map<String, String> data,
+                              String body, Context here) {
+        NotificationManagerCompat nm = NotificationManagerCompat.from(here);
+        // Create an Intent for the activity you want to start
+        Intent intent = new Intent(here, MessageActivity.class);
+        Iterator<String> k = data.keySet().iterator();
+        while(k.hasNext()) {
+            String key = k.next();
+            intent.putExtra(key, data.get(key));//add keys
+        };
+        // Create the TaskStackBuilder and add the intent, which inflates the back stack
+        TaskStackBuilder stackBuilder = TaskStackBuilder.create(here);
+        stackBuilder.addNextIntentWithParentStack(intent);
+        // Get the PendingIntent containing the entire back stack
+        PendingIntent pIntent = stackBuilder.getPendingIntent(0,
+                PendingIntent.FLAG_UPDATE_CURRENT);
+        Notification builder = new NotificationCompat.Builder(here,
+                NotificationChannel.DEFAULT_CHANNEL_ID)
+                .setContentIntent(pIntent)
+                .setSmallIcon(R.drawable.ic_notify)
+                .setContentTitle(title)
+                .setContentText(body)
+                /* .setStyle(new NotificationCompat.BigTextStyle()
+                        .bigText(body)) */
+                .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+                .setCategory(NotificationCompat.CATEGORY_MESSAGE)
+                .build();
+        nm.notify(title.hashCode(), builder);
     }
 
     public static Bitmap getBitmap(Context here, String res) throws IOException {

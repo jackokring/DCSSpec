@@ -12,6 +12,11 @@ import androidx.core.app.TaskStackBuilder;
 import uk.co.kring.android.dcs.room.AppDatabase;
 import uk.co.kring.android.dcs.statics.CodeStatic;
 
+import java.util.Enumeration;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.Set;
+
 public class MyService extends Service {
 
     NotificationManagerCompat nm;
@@ -22,7 +27,6 @@ public class MyService extends Service {
     @Nullable
     @Override
     public IBinder onBind(Intent intent) {
-        nm = NotificationManagerCompat.from(getApplicationContext());
         recordPermission = intent.getBooleanExtra("record", false);
         db = AppDatabase.getInstance(getApplicationContext());
         return null;
@@ -31,29 +35,5 @@ public class MyService extends Service {
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         return super.onStartCommand(intent, flags, startId);
-    }
-
-    public void notify(String title, String content) {
-        // Create an Intent for the activity you want to start
-        Intent intent = new Intent(this, MessageActivity.class);
-        intent.putExtra("title", title);
-        // Create the TaskStackBuilder and add the intent, which inflates the back stack
-        TaskStackBuilder stackBuilder = TaskStackBuilder.create(this);
-        stackBuilder.addNextIntentWithParentStack(intent);
-        // Get the PendingIntent containing the entire back stack
-        PendingIntent pIntent = stackBuilder.getPendingIntent(0,
-                PendingIntent.FLAG_UPDATE_CURRENT);
-        Notification builder = new NotificationCompat.Builder(this,
-                NotificationChannel.DEFAULT_CHANNEL_ID)
-                .setContentIntent(pIntent)
-                .setSmallIcon(R.drawable.ic_notify)
-                .setContentTitle(title)
-                .setContentText(content)
-                .setStyle(new NotificationCompat.BigTextStyle()
-                        .bigText(content))
-                .setPriority(NotificationCompat.PRIORITY_DEFAULT)
-                .setCategory(NotificationCompat.CATEGORY_MESSAGE)
-                .build();
-        nm.notify(title.hashCode(), builder);
     }
 }

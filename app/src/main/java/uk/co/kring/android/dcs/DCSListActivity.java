@@ -54,10 +54,10 @@ public class DCSListActivity extends AppCompatActivity {
                 REQUEST_RECORD_AUDIO_PERMISSION);
     }
 
-    protected void onResume() {
+    /* protected void onResume() {
         super.onResume();
         UtilStatic.googleAPICheck(this);
-    }
+    } */
 
     class MyAdapter extends BaseAdapter {
 
