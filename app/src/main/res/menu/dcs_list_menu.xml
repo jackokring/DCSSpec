@@ -5,14 +5,21 @@
             android:icon="@drawable/ic_notify"
             app:showAsAction="ifRoom|withText"
             android:onClick="onShowMessagesAction"
-            android:title="@string/messages">
+            android:title="@string/message_list_activity">
     </item>
     <item
             android:id="@+id/menu_action_communicate"
-            android:icon="@drawable/ic_communicate"
+            android:icon="@drawable/ic_screen"
             app:showAsAction="ifRoom|withText"
             android:onClick="onShowCommunicateAction"
-            android:title="@string/messages">
+            android:title="@string/surface_activity">
+    </item>
+    <item
+            android:id="@+id/menu_action_dsp"
+            android:icon="@drawable/ic_dsp"
+            app:showAsAction="ifRoom|withText"
+            android:onClick="onShowDSPAction"
+            android:title="@string/dsp_activity">
     </item>
     <item
             android:id="@+id/menu_action_settings"

@@ -1,6 +1,7 @@
 package uk.co.kring.android.dcs;
 
 import android.Manifest;
+import android.app.Activity;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -128,6 +129,12 @@ public class DCSListActivity extends AppCompatActivity {
     public void onShowCommunicateAction(MenuItem item) {
         Intent intent = new Intent(DCSListActivity.this,
                 SurfaceActivity.class);
+        startActivity(intent);
+    }
+
+    public void onShowDSPAction(MenuItem item) {
+        Intent intent = new Intent(DCSListActivity.this,
+                Activity.class);
         startActivity(intent);
     }
 

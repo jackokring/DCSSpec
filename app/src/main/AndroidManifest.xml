@@ -39,6 +39,11 @@
             </intent-filter>
         </activity>
         <activity
+                android:name=".DSPActivity"
+                android:label="@string/dcs_list_activity"
+                android:parentActivityName=".DCSListActivity">
+        </activity>
+        <activity
                 android:name=".DCSActivity"
                 android:label="@string/dcs_activity"
                 android:parentActivityName=".DCSListActivity">

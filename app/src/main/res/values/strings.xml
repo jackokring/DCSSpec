@@ -3,12 +3,11 @@
     <string name="app_name">DCS</string>
     <string name="maps_activity">Location</string>
     <string name="dcs_list_activity">DCS List</string>
+    <string name="dsp_activity">DSP</string>
     <string name="dcs_activity">DCS Details</string>
     <string name="message_list_activity">Message List</string>
-    <string name="message_activity">Message Details</string>
-    <string name="messages">Messages</string>
+    <string name="message_activity">Message</string>g>
     <string name="surface_activity">Communication</string>
-    <string name="communicate">Communicate</string>
     <string name="settings_activity">Settings</string>
     <string name="web_activity">Information</string>
 
