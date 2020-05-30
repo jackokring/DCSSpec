@@ -50,6 +50,7 @@ public class DCSListActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_dcs_list);
         ((ListView)findViewById(R.id.dcs_list)).setAdapter(la);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);//back
         UtilStatic.googleAPICheck(this);
         ActivityCompat.requestPermissions(this, permissions,
                 REQUEST_RECORD_AUDIO_PERMISSION);

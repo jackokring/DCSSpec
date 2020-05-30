@@ -30,6 +30,7 @@ public class DSPActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_dcs_list);
         ((ListView)findViewById(R.id.dcs_list)).setAdapter(la);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);//back
     }
 
     class MyAdapter extends BaseAdapter {

@@ -9,6 +9,7 @@ import android.webkit.*;
 import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
+import uk.co.kring.android.dcs.statics.UtilStatic;
 
 public class WebActivity extends AppCompatActivity {
 
@@ -19,7 +20,7 @@ public class WebActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_web);
         final WebView webView = (WebView) findViewById(R.id.web_view);
-
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);//back
         WebSettings webSettings = webView.getSettings();
         webSettings.setJavaScriptEnabled(true);
         webSettings.setUserAgentString(getResources().getString(R.string.app_name));
@@ -69,9 +70,9 @@ public class WebActivity extends AppCompatActivity {
         }
 
         /** Show a toast from the web page */
-        //@JavascriptInterface
-        /* public void showToast(String toast) {
-            Toast.makeText(mContext, toast, Toast.LENGTH_SHORT).show();
-        } */
+        @JavascriptInterface
+        public void showToast(String toast) {
+            UtilStatic.toast(mContext, toast);
+        }
     }
 }
