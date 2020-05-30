@@ -9,31 +9,49 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
-import android.widget.BaseAdapter;
-import android.widget.ListView;
-import android.widget.TextView;
+import android.widget.*;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import uk.co.kring.android.dcs.statics.CodeStatic;
+import uk.co.kring.android.dcs.statics.DSPStatic;
 import uk.co.kring.android.dcs.statics.UtilStatic;
 
 public class DSPActivity extends AppCompatActivity {
 
     MyAdapter la = new MyAdapter();
-    //TODO: DSP algorithm selects and sliders
-    CodeStatic dcs = CodeStatic.getInstance();
+
+    public int controlCount() {
+        return 32;//number of controls
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_dcs_list);
+        la.makeControls();
         ((ListView)findViewById(R.id.dcs_list)).setAdapter(la);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);//back
     }
 
     class MyAdapter extends BaseAdapter {
+
+        public int getValue(int idx) {
+            return controls[idx];
+        }
+
+        public void setName(String s, int idx) {
+            names[idx].setText(s);
+        }
+
+        public void makeControls() {
+            controls = new int[getCount()];
+            names = new TextView[getCount()];
+            //TODO: initial control names and values
+        }
+
+        int controls[];
+        TextView names[];
 
         @Override
         public View getView(final int position, View convertView, ViewGroup container) {
@@ -42,14 +60,24 @@ public class DSPActivity extends AppCompatActivity {
                         false);
             }
 
-            convertView.setOnClickListener(new AdapterView.OnClickListener() {
+            names[position] = ((TextView) convertView.findViewById(R.id.name));
+            SeekBar sb = ((SeekBar) convertView.findViewById(R.id.control));
+            sb.setMax(Integer.MAX_VALUE);
+            sb.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+                @Override
+                public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
+                    controls[position] = i;
+                    //TODO: update service
+                }
 
                 @Override
-                public void onClick(View view) {
-                    Intent intent = new Intent(DSPActivity.this,
-                            DCSActivity.class);
-                    intent.putExtra("id", position);
-                    startActivity(intent);
+                public void onStartTrackingTouch(SeekBar seekBar) {
+
+                }
+
+                @Override
+                public void onStopTrackingTouch(SeekBar seekBar) {
+
                 }
             });
             return convertView;
@@ -57,7 +85,7 @@ public class DSPActivity extends AppCompatActivity {
 
         @Override
         public int getCount() {
-            return dcs.primaries.length;
+            return controlCount();
         }
 
         @Override
@@ -67,7 +95,7 @@ public class DSPActivity extends AppCompatActivity {
 
         @Override
         public long getItemId(int i) {
-            return dcs.primaries[i];
+            return i;
         }
     }
 

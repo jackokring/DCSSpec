@@ -4,6 +4,7 @@ import static java.lang.Math.PI;
 import static java.lang.Math.expm1;
 
 public class DSPStatic {
+
     /* 2P
            Ghigh * s^2 + Gband * s + Glow
     H(s) = ------------------------------
