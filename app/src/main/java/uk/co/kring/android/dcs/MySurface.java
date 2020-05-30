@@ -116,8 +116,8 @@ public class MySurface extends SurfaceView implements Callback {
             if(y >= iny + h) {
                 y -= 1F;//scroll back
                 Bitmap scroll = screen.copy(Bitmap.Config.ARGB_8888, false);
-                window((int)inx * UtilStatic.width, (int)iny * UtilStatic.height,
-                        (int)w * UtilStatic.width,(int)h * UtilStatic.height);
+                window((int)(inx * UtilStatic.width), (int)(iny * UtilStatic.height),
+                        (int)(w * UtilStatic.width), (int)(h * UtilStatic.height));
                 drawing.drawBitmap(scroll, bottom, top, null);//scroll
                 defaultZeroWindow();
             }

@@ -63,7 +63,13 @@ public class DSPStatic {
         }
     }
 
-    //TODO: fix pointers
+    /* Perform calculus. Uses the end point integral method.
+    An end point integral does not depend on an approximation like the
+    Simpson's rule, and just needs estimates of the differentials at the end point.
+    Subtracting two end point integrals gives the definite integral.
+    Series acceleration means few differentials have to be evaluated unlike other
+    integral methods.
+     */
     public class Calculus {
         double h;
 
@@ -71,47 +77,49 @@ public class DSPStatic {
             h = sampleStep;
         }
 
-        public void differential(double[] input, double[] output) {
+        public double[] differential(double[] input) {
             //coefficients via http://web.media.mit.edu/~crtaylor/calculator.html
             //all done from prospective of sample input[0]
+            double[] output = new double[9];
             double t = h;
             output[0] = input[0];
             double co1[] = {105, -960, 3920, -9408, 14700, -15680, 11760, -6720, 2283};
-            output[1] = sum(co1, input - 8, input) / (840 * t);
+            output[1] = sum(co1, input, 0, 8, 1) / (840 * t);
             t *= h;
             double co2[] = {3267, -29664, 120008, -284256, 435330, -448672, 312984, -138528, 29531};
-            output[2] = sum(co2, input - 8, input) / (5040 * t);
+            output[2] = sum(co2, input, 0, 8, 1) / (5040 * t);
             t *= h;
             double co3[] = {469, -4216, 16830, -39128, 58280, -57384, 36706, -13960, 2403};
-            output[3] = sum(co3, input - 8, input) / (240 * t);
+            output[3] = sum(co3, input, 0, 8, 1) / (240 * t);
             t *= h;
             double co4[] = {967, -8576, 33636, -76352, 109930, -102912, 61156, -21056, 3207};
-            output[4] = sum(co4, input - 8, input) / (240 * t);
+            output[4] = sum(co4, input, 0, 8, 1) / (240 * t);
             t *= h;
             double co5[] = {35, -305, 1170, -2581, 3580, -3195, 1790, -575, 81};
-            output[5] = sum(co5, input - 8, input) / (6 * t);
+            output[5] = sum(co5, input, 0, 8, 1) / (6 * t);
             t *= h;
             double co6[] = {23, -196, 732, -1564, 2090, -1788, 956, -292, 39};
-            output[6] = sum(co6, input - 8, input) / (4 * t);
+            output[6] = sum(co6, input, 0, 8, 1) / (4 * t);
             t *= h;
             double co7[] = {7, -58, 210, -434, 560, -462, 238, -70, 9};
-            output[7] = sum(co7, input - 8, input) / (2 * t);
+            output[7] = sum(co7, input, 0, 8, 1) / (2 * t);
             t *= h;
             double co8[] = {1, -8, 28, -56, 70, -56, 28, -8, 1};
-            output[8] = sum(co8, input - 8, input) / (1 * t);
+            output[8] = sum(co8, input, 0, 8, 1) / (1 * t);
+            return output;
         }
 
         public double future(double[] input) {
             double co1[] = {1, -9, 36, -84, 126, -126, 84, -36, 9};//0th differential in the future
-            return sum(co1, input - 8, input);
+            return sum(co1, input, 0, 8, 1);
         }
 
-        public double sum(double[] coeff, double[] inputBegin, double[] inputEnd, int step) {
-            volatile double residual = 0.0;
+        public double sum(double[] c, double[] input, int begin, int end, int step) {
+            double residual = 0.0;
             double add = 0.0;
             double temp;
-            for (; inputBegin <= inputEnd; inputBegin += step) {
-                temp = ( * (coeff++)) *( * inputBegin);
+            for(; begin <= end; begin += step) {
+                temp = c[begin] * (input[begin]);
                 double test = add + (temp + residual);
                 residual = (temp + residual) - (test - add);
                 add = test;
@@ -135,25 +143,27 @@ public class DSPStatic {
             tick++;
         }
 
-        public void expDecay(double *inputBegin, double *inputEnd, double *output,
-                 int step, bool splitDistribute) {//from now
-            uint64_t tt = tick - (inputEnd - inputBegin) / step;//work out sampled start time
-            for (; inputBegin <= inputEnd; inputBegin += step) {
-                ( * (output++)) =( * inputBegin) *expm1(-(sigma * h * tt)) +
-                        (splitDistribute ? 0.0 : ( * inputBegin));
+        public double[] expDecay(double[] input, int begin, int end,
+                 int step, boolean splitDistribute) {//from now
+            double[] output = new double[input.length];
+            long tt = tick - (end - begin) / step;//work out sampled start time
+            for(; begin <= end; begin += step) {
+                output[begin] = input[begin] * expm1(-(sigma * h * tt)) +
+                        (splitDistribute ? 0.0 : input[begin]);
                 tt += 1;
             }
+            return output;
         }
 
-        public void cumSum(double[] inputBegin, double[] inputEnd, double[] output, int step) {
-            volatile double residual = 0.0;
+        public void cumSum(double[] input, int begin, int end, int step) {
+            double residual = 0.0;
             double add = 0.0;
             double temp;
-            for (; inputBegin <= inputEnd; inputBegin += step) {
-                temp = ( * inputBegin);
+            for(; begin <= end; begin += step) {
+                temp = input[begin];
                 double test = add + (temp + residual);
                 residual = (temp + residual) - (test - add);
-                ( * (output++)) =test;
+                input[begin] = add = test;
             }
         }
 
@@ -161,62 +171,48 @@ public class DSPStatic {
          * THREE BELOW ACCELERATIONS WORK WITH CUMULATIVE SUMS OF SERIES
          * ================================================================*/
 
-        public double seriesAccel(double[] inputBegin, double[] inputEnd,
-                    double[] output, int step, boolean outsToo) {
-            if (inputBegin == inputEnd) {
-        *output = *inputBegin;
+        public boolean seriesAccel(double[] input, int begin, int end, int step) {
+            if (begin == end) {
                 return true;//convergence extra not possible
             }
-            inputBegin += step;
-            inputEnd -= step;
+            begin += step;
+            end -= step;
             double temp;
             double nm1;
             double np1;
             double temp2;
-            if (inputBegin > inputEnd) {
-        *output = ( * (inputBegin - 1) + *inputBegin) /2.0;
+            if (begin > end) {
+                input[begin] = (input[begin - 1] + input[begin]) /2.0;
                 return true;//convergence extra not possible
             }
-            bool cov = (inputBegin == inputEnd);
-            for (; inputBegin <= inputEnd; inputBegin += step) {
+            boolean cov = (begin == end);
+            for(; begin <= end; begin += step) {
                 //Shank's method
-                nm1 = *(inputBegin - step);
-                np1 = *(inputBegin + step);
-                temp = temp2 = (np1 - * inputBegin);
+                nm1 = input[begin - step];
+                np1 = input[begin + step];
+                temp = temp2 = (np1 - input[begin]);
                 temp *= temp;
-                temp2 -= ( * inputBegin - nm1);
+                temp2 -= input[begin] - nm1;
                 if (temp2 == 0.0) {
                     temp = 0.0;//pass through as no delta
                 } else {
                     temp /= temp2;
                 }
-        *output = np1 - temp;
-                output += outsToo ? step : 1;//step outs for replacements
+                input[begin - step] = np1 - temp;
             }
             return cov;
         }
 
-        public double seriesAccelLim(double[] inputBegin, double[] inputEnd, int step) {
-            while (!seriesAccel(inputBegin, inputEnd, inputBegin, step, true)) {//overwrite
-                inputEnd -= 2;//two off end
+        public double seriesAccelLim(double[] input, int begin, int end, int step) {
+            while (!seriesAccel(input, begin, end, step)) {//overwrite
+                end -= 2;//two off end
             }
-            return *inputBegin;
+            return input[begin];
         }
 
-        //for an application test on sets of convergents as a series which has same limit?
-
-        public double seriesAccelLim2(double[] inputBegin, double[] inputEnd,
-                        int step, int nest) {
-            if (nest > 1) {
-                seriesAccelLim(inputEnd, inputBegin, step *= -2);
-                return seriesAccelLim2(inputEnd, inputBegin, step, --nest);
-            }
-            return seriesAccelLim(inputEnd, inputBegin, step *= -2);
-        }
-
-        public void preMul(double *coeff, double *inputBegin, double *inputEnd, double *output, int step) {
-            for (; inputBegin <= inputEnd; inputBegin += step) {
-                ( * (output++)) = *inputBegin * *(coeff++);//pre multiply by coeeficients
+        public void preMul(double[] c, double[] input, int begin, int end, int step) {
+            for(; begin <= end; begin += step) {
+                input[begin] = input[begin] * c[begin];//pre multiply by coefficients
             }
         }
 
@@ -224,39 +220,25 @@ public class DSPStatic {
             double fact = 1.0;//and sign
             double time = (double) tick * h;
             double xacc = time;
-            for (uint i = 0; i < 9; ++i) {
-        *input++ *= xacc * fact;
-                fact /= -(double) i;
+            for (int i = 0; i < 9; ++i) {
+                input[i] *= xacc * fact;
+                fact /= -(double)i;
                 xacc *= time;
             }
         }
 
-        public double differential9(double[] input) {
-            input[1] = future(input);//create estimate
-            differential(input + 1, input + 1);//future differential estimates
-            double co9[] = {-4, 37, -152, 364, -560, 574, -392, 172, -44, 5};//an extra term
-            double t = h;
-            t *= t;
-            t *= t;
-            t *= t;
-            return sum(co9, input - 8, input + 1) / (1 * t) - *
-            (input + 9);//8th derivative difference for stability of prediction
+        public double integral(double[] input) {//input[9]
+            input = differential(input);
+            integralPreMul(input);
+            cumSum(input, 0, 8, 1);
+            return seriesAccelLim(input, 0, 8, 1);
         }
 
-        public double integral(double[] input, double[] output) {//input[-8] to input[0]
-            differential(input, output);
-            integralPreMul(output);
-            cumSum(output, output + 8, output);
-            return seriesAccelLim(output, output + 8);//eventually output[0] plus some buffered junk upto output[8]
-        }
-
-        public sparseLaplace(double *input, double *output) {
-            integral(input, output);
-            double buff[ 9];
-            expDecay(input - 8, input, buff + 8, 1, true);//do as easy part
-            double clobber = output[0];
-            integral(buff + 8, output);
-            output[0] += clobber;
+        public double sparseLaplace(double[] input) {
+            double[] c = expDecay(input, 0, 8, 1, true);
+            double i = integral(input);
+            i += integral(c);
+            return i;
         }
     }
 }
