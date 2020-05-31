@@ -40,7 +40,7 @@ public class DCSListActivity extends AppCompatActivity {
                 break;
         }
         //if(!permissionToRecordAccepted) finish();
-        Intent intent = new Intent(this, MyService.class);
+        Intent intent = new Intent(this, AudioService.class);
         intent.putExtra("record", permissionToRecordAccepted);
         startService(intent);
     }
@@ -110,7 +110,7 @@ public class DCSListActivity extends AppCompatActivity {
 
     @Override
     protected void onDestroy() {
-        stopService(new Intent(this, MyService.class));
+        stopService(new Intent(this, AudioService.class));
         super.onDestroy();
     }
 

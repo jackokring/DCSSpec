@@ -9,7 +9,7 @@ import uk.co.kring.android.dcs.statics.UtilStatic;
 
 import java.util.Map;
 
-public class MyFBMessageService extends FirebaseMessagingService {
+public class DataService extends FirebaseMessagingService {
 
     @Override
     public void onNewToken(String token) {

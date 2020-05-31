@@ -77,14 +77,14 @@
         </activity>
 
         <service
-                android:name=".MyService"
+                android:name=".AudioService"
                 android:enabled="true">
             <intent-filter>
                 <action android:name=".MyService.ACTION_START"/>
             </intent-filter>
         </service>
         <service
-                android:name=".MyFBMessageService"
+                android:name=".DataService"
                 android:exported="false">
             <intent-filter>
                 <action android:name="com.google.firebase.MESSAGING_EVENT" />

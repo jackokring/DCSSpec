@@ -1,21 +1,12 @@
 package uk.co.kring.android.dcs;
 
-import android.Manifest;
-import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.*;
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.app.ActivityCompat;
-import uk.co.kring.android.dcs.statics.CodeStatic;
-import uk.co.kring.android.dcs.statics.DSPStatic;
-import uk.co.kring.android.dcs.statics.UtilStatic;
 
 public class DSPActivity extends AppCompatActivity {
 
@@ -101,7 +92,7 @@ public class DSPActivity extends AppCompatActivity {
 
     @Override
     protected void onDestroy() {
-        stopService(new Intent(this, MyService.class));
+        stopService(new Intent(this, AudioService.class));
         super.onDestroy();
     }
 
