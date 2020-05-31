@@ -2,7 +2,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
           package="uk.co.kring.android.dcs"
           android:installLocation="preferExternal"
-        android:versionName="@string/version">
+          android:versionName="@string/version">
 
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
     <uses-permission android:name="android.permission.RECORD_AUDIO"/>
@@ -15,9 +15,27 @@
             android:roundIcon="@mipmap/ic_launcher_round"
             android:supportsRtl="true"
             android:theme="@style/AppTheme">
-        <activity android:name=".WebActivity"
-                  android:label="@string/web_activity"
-                  android:parentActivityName=".MessageListActivity">
+        <provider
+                android:name="androidx.core.content.FileProvider"
+                android:authorities="uk.co.kring.android.dcs.fileprovider"
+                android:grantUriPermissions="true"
+                android:exported="false">
+            <meta-data
+                    android:name="android.support.FILE_PROVIDER_PATHS"
+                    android:resource="@xml/filepaths" />
+        </provider>
+        <activity android:name=".ShareActivity"
+                  android:label="@string/share_activity">
+            <intent-filter>
+                <action android:name="android.intent.action.SEND" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <data android:mimeType="*/*" />
+            </intent-filter>
+        </activity>
+        <activity
+                android:name=".WebActivity"
+                android:label="@string/web_activity"
+                android:parentActivityName=".MessageListActivity">
         </activity>
         <activity
                 android:name=".SettingsActivity"
@@ -40,7 +58,7 @@
         </activity>
         <activity
                 android:name=".DSPActivity"
-                android:label="@string/dcs_list_activity"
+                android:label="@string/dsp_activity"
                 android:parentActivityName=".DCSListActivity">
         </activity>
         <activity
@@ -87,14 +105,16 @@
                 android:name=".DataService"
                 android:exported="false">
             <intent-filter>
-                <action android:name="com.google.firebase.MESSAGING_EVENT" />
+                <action android:name="com.google.firebase.MESSAGING_EVENT"/>
             </intent-filter>
         </service>
-        <!-- Set custom default icon. This is used when no icon is set for incoming notification messages.
-        See README(https://goo.gl/l4GJaQ) for more. -->
+        <!--
+ Set custom default icon. This is used when no icon is set for incoming notification messages.
+        See README(https://goo.gl/l4GJaQ) for more.
+        -->
         <meta-data
                 android:name="com.google.firebase.messaging.default_notification_icon"
-                android:resource="@drawable/ic_notify" />
+                android:resource="@drawable/ic_notify"/>
     </application>
 
 </manifest>
