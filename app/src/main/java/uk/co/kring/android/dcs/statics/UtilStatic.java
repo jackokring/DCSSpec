@@ -9,6 +9,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Rect;
+import android.os.Bundle;
 import android.widget.Toast;
 import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
@@ -20,6 +21,7 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.analytics.FirebaseAnalytics;
 import com.google.firebase.remoteconfig.FirebaseRemoteConfig;
 import com.google.firebase.remoteconfig.FirebaseRemoteConfigSettings;
 import uk.co.kring.android.dcs.MessageActivity;
@@ -170,5 +172,12 @@ public class UtilStatic {
     static String getPrefRemote(String key, String unset) {
         if(config != null) return config.getString(key);
         return unset;
+    }
+
+    static FirebaseAnalytics analytics;
+
+    public static void postAnalytic(Context c, Bundle b) {
+        if(analytics == null) analytics = FirebaseAnalytics.getInstance(c);
+        if(b != null) analytics.logEvent("post", b);
     }
 }
