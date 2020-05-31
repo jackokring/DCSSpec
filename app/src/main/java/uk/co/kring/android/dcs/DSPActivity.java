@@ -3,6 +3,7 @@ package uk.co.kring.android.dcs;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.*;
@@ -101,5 +102,17 @@ public class DSPActivity extends AppCompatActivity {
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.dsp_menu, menu);
         return true;
+    }
+
+    public void onShowMuteAction(MenuItem item) {
+
+    }
+
+    public void onShowPassThroughAction(MenuItem item) {
+
+    }
+
+    public void onShowFilterAction(MenuItem item) {
+
     }
 }

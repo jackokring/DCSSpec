@@ -54,7 +54,7 @@ public class ShareActivity extends AppCompatActivity {
     //MENU ITEMS
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.dsp_menu, menu);
+        getMenuInflater().inflate(R.menu.share_menu, menu);
         return true;
     }
 

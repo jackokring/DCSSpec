@@ -1,10 +1,24 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
       xmlns:app="http://schemas.android.com/apk/res-auto">
     <item
-            android:id="@+id/menu_action_messages"
-            android:icon="@drawable/ic_notify"
+            android:id="@+id/menu_action_mute"
+            android:icon="@drawable/ic_mute"
             app:showAsAction="ifRoom|withText"
-            android:onClick="onShowMessagesAction"
-            android:title="@string/message_activity">
+            android:onClick="onShowMuteAction"
+            android:title="@string/mute_menu">
+    </item>
+    <item
+            android:id="@+id/menu_action_passThrough"
+            android:icon="@drawable/ic_passThrough"
+            app:showAsAction="ifRoom|withText"
+            android:onClick="onShowPassThroughAction"
+            android:title="@string/passThrough_menu">
+    </item>
+    <item
+            android:id="@+id/menu_action_filter"
+            android:icon="@drawable/ic_filter"
+            app:showAsAction="ifRoom|withText"
+            android:onClick="onShowFilterAction"
+            android:title="@string/filter_menu">
     </item>
 </menu>

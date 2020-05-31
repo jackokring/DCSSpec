@@ -1,6 +1,9 @@
 <resources>
+    <!-- APP -->
     <string name="version">1.0.0</string>
     <string name="app_name">DCS</string>
+
+    <!-- ACTIVITIES -->
     <string name="maps_activity">Location</string>
     <string name="dcs_list_activity">DCS List</string>
     <string name="dsp_activity">DSP</string>
@@ -12,6 +15,12 @@
     <string name="web_activity">Information</string>
     <string name="share_activity">Share</string>
 
+    <!-- MENU ITEMS NOT CHANGING ACTIVITY -->
+    <string name="mute_menu">Mute</string>
+    <string name="passThrough_menu">In->Out</string>
+    <string name="filter_menu">Filter</string>
+
+    <!-- DIALOGS -->
     <!-- Dialog Buttons -->
     <string name="ok">OK</string>
     <string name="cancel">Cancel</string>
