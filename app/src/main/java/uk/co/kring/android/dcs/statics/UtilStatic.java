@@ -24,6 +24,7 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.analytics.FirebaseAnalytics;
 import com.google.firebase.remoteconfig.FirebaseRemoteConfig;
 import com.google.firebase.remoteconfig.FirebaseRemoteConfigSettings;
+import uk.co.kring.android.dcs.ActivityException;
 import uk.co.kring.android.dcs.MessageActivity;
 import uk.co.kring.android.dcs.R;
 
@@ -56,16 +57,22 @@ public class UtilStatic {
         Toast.makeText(here, toast, Toast.LENGTH_SHORT).show();
     }
 
-    public static void notify(String title, Map<String, String> data,
+    public static Bundle bundleFromMap(Map<String, String> data) {
+        Bundle b = new Bundle();
+        Iterator<String> k = data.keySet().iterator();
+        while(k.hasNext()) {
+            String key = k.next();
+            b.putString(key, data.get(key));//add keys
+        };
+        return b;
+    }
+
+    public static void notify(String title, Bundle data,
                               String body, Context here) {
         NotificationManagerCompat nm = NotificationManagerCompat.from(here);
         // Create an Intent for the activity you want to start
         Intent intent = new Intent(here, MessageActivity.class);
-        Iterator<String> k = data.keySet().iterator();
-        while(k.hasNext()) {
-            String key = k.next();
-            intent.putExtra(key, data.get(key));//add keys
-        };
+        intent.putExtras(data);
         // Create the TaskStackBuilder and add the intent, which inflates the back stack
         TaskStackBuilder stackBuilder = TaskStackBuilder.create(here);
         stackBuilder.addNextIntentWithParentStack(intent);
@@ -177,7 +184,18 @@ public class UtilStatic {
     static FirebaseAnalytics analytics;
 
     public static void postAnalytic(Context c, Bundle b) {
-        if(analytics == null) analytics = FirebaseAnalytics.getInstance(c);
+        if(analytics == null) {
+            if(c == null) throw new ActivityException(new Exception());
+            analytics = FirebaseAnalytics.getInstance(c);
+        }
         if(b != null) analytics.logEvent("post", b);
+    }
+
+    public static void postAnalyticContext(Context c) {
+        postAnalytic(c, null);
+    }
+
+    public static void postAnalyticBundle(Bundle b) {
+        postAnalytic(null, b);
     }
 }

@@ -1,13 +1,12 @@
 package uk.co.kring.android.dcs;
 
+import android.os.Bundle;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.messaging.FirebaseMessaging;
 import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
 import uk.co.kring.android.dcs.statics.UtilStatic;
-
-import java.util.Map;
 
 public class DataService extends FirebaseMessagingService {
 
@@ -40,7 +39,7 @@ public class DataService extends FirebaseMessagingService {
 
     @Override
     public void onMessageReceived(RemoteMessage remoteMessage) {
-        Map<String, String> data = remoteMessage.getData();
+        Bundle data = UtilStatic.bundleFromMap(remoteMessage.getData());
         RemoteMessage.Notification n = remoteMessage.getNotification();
         if(n != null) {//foreground notification intercept
             UtilStatic.notify(n.getTitle(), data, n.getBody(), this);
@@ -49,7 +48,7 @@ public class DataService extends FirebaseMessagingService {
         }
     }
 
-    public void onDataPacket(Map<String, String> data) {
+    public void onDataPacket(Bundle data) {
 
     }
 

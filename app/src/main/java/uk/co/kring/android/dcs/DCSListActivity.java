@@ -52,7 +52,7 @@ public class DCSListActivity extends AppCompatActivity {
         ((ListView)findViewById(R.id.dcs_list)).setAdapter(la);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);//back
         UtilStatic.googleAPICheck(this);
-        UtilStatic.postAnalytic(this, null);//init analytics
+        UtilStatic.postAnalyticContext(this);//init analytics
         ActivityCompat.requestPermissions(this, permissions,
                 REQUEST_RECORD_AUDIO_PERMISSION);
     }
