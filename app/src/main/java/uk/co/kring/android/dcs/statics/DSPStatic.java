@@ -10,21 +10,23 @@ public class DSPStatic {
     H(s) = ------------------------------
                  s^2 + k * s + 1
      */
+    //TWO POLE PENTA-VARIANT FILTER
     public class TwoPole {
-        float fs, f, t, u, k, tf, bl, bb, lb, i;
+        float fs, f, t, u, k, tf, bl, bb, shelfCentre, lowHi, i;
 
         public TwoPole(float sampleRate) {
             fs = sampleRate;
         }
 
-        public void setFK(float fc, float ks, float inv, float lowBand) {
+        public void setFK(float fc, float ks, float inv, float sc, float lh) {
             f   = (float)Math.tan(PI * fc / fs);
             t   = 1 / (1 + k * f);
             u   = 1 / (1 + t * f * f);
             tf  = t * f;
             k = ks;
-            lb = lowBand;
+            shelfCentre = sc;
             i = inv;
+            lowHi = lh;
         }
 
         public void process(float[] samples) {
@@ -34,32 +36,36 @@ public class DSPStatic {
                 float high = samples[i] - low - k * band;
                 bb = band + f * high;
                 bl = low  + f * band;
-                low = band * (1F - lb) + low * lb;
-                high = band * (1F - lb) + high * lb;
-                samples[i] = low * (1F - i) + (samples[i] - high) * i;//lpf default
+                low = band * (1F - shelfCentre) + low * shelfCentre;
+                high = band * (1F - shelfCentre) + high * shelfCentre;
+                float lh = low * (1F - lowHi) + high * lowHi;
+                float hl = high * (1F - lowHi) + low * lowHi;
+                samples[i] = lh * (1F - i) + (samples[i] - hl) * i;//lpf default
             }
         }
     }
 
     /* 1P H(s) = 1 / (s + fb) */
+    //ONE POLE TRI-VARIANT FILTER
     public class OnePole {
-        float fs, f, f2, k, b;
+        float fs, f, f2, k, b, lowHi;
 
         public OnePole(float sampleRate) {
             fs = sampleRate;
         }
 
-        public void setFK(float fc, float ks) {//ks feedback not k*s denominator
+        public void setFK(float fc, float fb, float lh) {//fb feedback not k*s denominator
             f   = (float)Math.tan(PI * fc / fs);
-            f2   = 1 / (1 + ks * f);
-            k = ks;
+            f2   = 1 / (1 + fb * f);
+            k = fb;
+            lowHi = lh;
         }
 
         public void process(float[] samples) {
             for(int i = 0; i < samples.length; ++i) {
                 float out = (f * samples[i] + b) * f2;
                 b = f * (samples[i] - k * out) + out;
-                samples[i] = out;//lpf default
+                samples[i] = out * (1F - lowHi) + (samples[i] - out) * lowHi;;//lpf default
             }
         }
     }
