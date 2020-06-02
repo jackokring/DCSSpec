@@ -7,13 +7,14 @@ import android.net.Uri;
 import android.os.Environment;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.webkit.MimeTypeMap;
 import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
 import androidx.core.content.FileProvider;
 import uk.co.kring.android.dcs.statics.UtilStatic;
 
-import java.io.File;
-import java.io.InputStream;
+import java.io.*;
+import java.util.UUID;
 
 import static java.security.AccessController.getContext;
 
@@ -35,7 +36,11 @@ public class ShareActivity extends AppCompatActivity {
             current = (Uri) intent.getParcelableExtra(Intent.EXTRA_STREAM);
             if (current != null) {
                 try {
-                    handleFile(getContentResolver().openInputStream(current));
+                    InputStream i;
+                    String ext = MimeTypeMap.getSingleton().getExtensionFromMimeType(type);
+                    handleFile(i = getContentResolver().openInputStream(current),
+                            ext, new FileProcessor());
+                    i.close();
                 } catch(Exception e) {
                     error();
                     finish();
@@ -47,8 +52,44 @@ public class ShareActivity extends AppCompatActivity {
         }
     }
 
-    public void handleFile(InputStream in) {
-        //TODO: handle file
+    public void handleFile(InputStream in, String ext, FileProcessor fp) {
+        String old = processedName;
+        processedName = UUID.randomUUID().toString() + ext;
+        File path = new File(getExternalFilesDir(null), "processed");
+        File newFile = new File(path, processedName);
+        try {
+            OutputStream os = new FileOutputStream(newFile);
+            fp.process(in, os, old);//use old name as useful maybe
+            os.flush();
+            os.close();
+        } catch(Exception e) {
+            error();
+        }
+    }
+
+    public InputStream openFile() {
+        if(processedName == null) {
+            error();
+            return null;
+        }
+        File path = new File(getExternalFilesDir(null), "processed");
+        File newFile = new File(path, processedName);
+        try {
+            return new FileInputStream(newFile);
+        } catch(Exception e) {
+            error();
+            return null;
+        }
+    }
+
+    public class FileProcessor {
+        public void process(InputStream is, OutputStream os, String oldName)
+                throws IOException {
+            int i;
+            while((i = is.read()) != -1) {
+                os.write(i);//copy
+            }
+        }
     }
 
     //MENU ITEMS
