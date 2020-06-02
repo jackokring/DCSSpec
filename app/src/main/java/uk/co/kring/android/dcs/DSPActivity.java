@@ -13,9 +13,11 @@ public class DSPActivity extends AppCompatActivity {
 
     MyAdapter la = new MyAdapter();
 
-    public int controlCount() {
-        return 32;//number of controls
-    }
+    public String[][] labels = {
+            { "Centre Frequency", "Resonant Q", "Invert", "Focus", "Low High Mix" }
+    };
+
+    public int algorithm = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -28,22 +30,15 @@ public class DSPActivity extends AppCompatActivity {
 
     class MyAdapter extends BaseAdapter {
 
-        public int getValue(int idx) {
-            return controls[idx];
-        }
-
-        public void setName(String s, int idx) {
-            names[idx].setText(s);
-        }
-
         public void makeControls() {
-            controls = new int[getCount()];
-            names = new TextView[getCount()];
-            //TODO: initial control names and values
+            int m = 0;
+            for(int i = 0; i < labels.length; ++i) {
+                if(m < labels[i].length) m = labels[i].length;
+            }
+            controls = new int[m];
         }
 
         int controls[];
-        TextView names[];
 
         @Override
         public View getView(final int position, View convertView, ViewGroup container) {
@@ -52,7 +47,8 @@ public class DSPActivity extends AppCompatActivity {
                         false);
             }
 
-            names[position] = ((TextView) convertView.findViewById(R.id.name));
+            ((TextView) convertView.findViewById(R.id.name))
+                .setText(labels[algorithm][position]);
             SeekBar sb = ((SeekBar) convertView.findViewById(R.id.control));
             sb.setMax(Integer.MAX_VALUE);
             sb.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
@@ -77,7 +73,7 @@ public class DSPActivity extends AppCompatActivity {
 
         @Override
         public int getCount() {
-            return controlCount();
+            return labels[algorithm].length;//number of labels
         }
 
         @Override
@@ -113,6 +109,7 @@ public class DSPActivity extends AppCompatActivity {
     }
 
     public void onShowFilterAction(MenuItem item) {
-
+        algorithm = (algorithm + 1) % labels.length;
+        ((ListView)findViewById(R.id.dcs_list)).invalidate();
     }
 }
