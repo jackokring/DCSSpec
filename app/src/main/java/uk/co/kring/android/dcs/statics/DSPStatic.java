@@ -5,6 +5,22 @@ import static java.lang.Math.expm1;
 
 public class DSPStatic {
 
+    //obtain mapped control values
+    public float lin(int val, float min, float max) {
+        float v = ((float)val) / (float)Integer.MAX_VALUE;
+        return min + (max - min) * v;
+    }
+
+    public float log(int val, float centre, float octaves) {
+        float v = lin(val, -octaves, octaves);
+        return (float)Math.pow(2F, v) * centre;
+    }
+
+    public float qk(int val, float min, float max) {
+        float v = lin(val, 1F / min, 1F / max);
+        return 1 / v;//return k from Q
+    }
+
     /* 2P
            Ghigh * s^2 + Gband * s + Glow
     H(s) = ------------------------------
