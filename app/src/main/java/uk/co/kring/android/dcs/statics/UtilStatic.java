@@ -176,6 +176,16 @@ public class UtilStatic {
         }
     }
 
+    public static boolean prefSave(Context c, String key, String val) {
+        SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(c);
+        if(getPrefRemote("!" + key,null) != null) {//override
+            return false;//can't save
+        } else {
+            sp.edit().putString(key, val).commit();
+            return true;
+        }
+    }
+
     static String getPrefRemote(String key, String unset) {
         if(config != null) return config.getString(key);
         return unset;
