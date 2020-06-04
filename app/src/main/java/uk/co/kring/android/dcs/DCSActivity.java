@@ -27,6 +27,9 @@ public class DCSActivity extends AppCompatActivity {
                 .setText(dcs.humanString((int)getItemId(position)));
         ((TextView) findViewById(R.id.dcs_members))
                 .setText(dcs.alternates(position));
+        //data per code
+        ((TextView) findViewById(R.id.dcs_binary))
+                .setText(dcs.asBinary((int)getItemId(position)));
     }
 
     public long getItemId(int i) {

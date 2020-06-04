@@ -186,6 +186,17 @@ public class CodeStatic {
         }
     }
 
+    public String asBinary(int code) {
+        code &= BITS_23;
+        int inv = 0;
+        for(int i = 0; i < 23; ++i) {
+            inv <<= 1;
+            inv |= code & 1;
+            code >>= 1;
+        }
+        return Integer.toBinaryString(inv);//write order string
+    }
+
     public int RXPrimary(int code) {//code to group
         int i = RXPrimary(code, 1);
         if(i >= 0) return i;
