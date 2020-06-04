@@ -31,7 +31,7 @@ public class AudioService extends Service {
 
     @Override
     public IBinder onBind(Intent intent) {
-        recordPermission = intent.getBooleanExtra("record", false);
+        //recordPermission = intent.getBooleanExtra("record", false);
         db = AppDatabase.getInstance(getApplicationContext());
         return new MyBinder();
     }
@@ -40,6 +40,10 @@ public class AudioService extends Service {
         AudioService getService() {
             return AudioService.this;
         }
+    }
+
+    public void setPermission(boolean rp) {
+        recordPermission = rp;
     }
 
     @Override

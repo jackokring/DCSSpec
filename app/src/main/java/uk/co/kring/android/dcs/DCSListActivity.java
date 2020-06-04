@@ -37,6 +37,7 @@ public class DCSListActivity extends AppCompatActivity {
         public void onServiceConnected(ComponentName className,
                                        IBinder service) {
             audio = ((AudioService.MyBinder)service).getService();
+            audio.setPermission(permissionToRecordAccepted);
         }
 
         @Override
@@ -56,7 +57,7 @@ public class DCSListActivity extends AppCompatActivity {
         }
         //if(!permissionToRecordAccepted) finish();
         Intent intent = new Intent(this, AudioService.class);
-        intent.putExtra("record", permissionToRecordAccepted);
+        //intent.putExtra("record", permissionToRecordAccepted);
         bindService(intent, connection, Context.BIND_AUTO_CREATE);
         //startService(intent);
     }
