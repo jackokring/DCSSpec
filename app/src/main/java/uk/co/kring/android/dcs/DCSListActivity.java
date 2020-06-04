@@ -2,9 +2,9 @@ package uk.co.kring.android.dcs;
 
 import android.Manifest;
 import android.app.Activity;
-import android.content.DialogInterface;
-import android.content.Intent;
+import android.content.*;
 import android.content.pm.PackageManager;
+import android.os.IBinder;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -29,6 +29,21 @@ public class DCSListActivity extends AppCompatActivity {
     public boolean permissionToRecordAccepted = false;
     private static final int REQUEST_RECORD_AUDIO_PERMISSION = 200;
     private String permissions[] = { Manifest.permission.RECORD_AUDIO };
+    private AudioService audio;
+
+    private ServiceConnection connection = new ServiceConnection() {
+
+        @Override
+        public void onServiceConnected(ComponentName className,
+                                       IBinder service) {
+            audio = ((AudioService.MyBinder)service).getService();
+        }
+
+        @Override
+        public void onServiceDisconnected(ComponentName componentName) {
+            audio = null;
+        }
+    };
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
@@ -42,7 +57,8 @@ public class DCSListActivity extends AppCompatActivity {
         //if(!permissionToRecordAccepted) finish();
         Intent intent = new Intent(this, AudioService.class);
         intent.putExtra("record", permissionToRecordAccepted);
-        startService(intent);
+        bindService(intent, connection, Context.BIND_AUTO_CREATE);
+        //startService(intent);
     }
 
     @Override
@@ -111,7 +127,7 @@ public class DCSListActivity extends AppCompatActivity {
 
     @Override
     protected void onDestroy() {
-        stopService(new Intent(this, AudioService.class));
+        unbindService(connection);
         super.onDestroy();
     }
 

@@ -4,10 +4,10 @@ import android.app.*;
 import android.content.Context;
 import android.content.Intent;
 import android.media.*;
+import android.os.Binder;
 import android.os.IBinder;
 import android.telephony.PhoneStateListener;
 import android.telephony.TelephonyManager;
-import androidx.annotation.Nullable;
 import androidx.core.app.NotificationManagerCompat;
 import uk.co.kring.android.dcs.room.AppDatabase;
 import uk.co.kring.android.dcs.statics.CodeStatic;
@@ -29,12 +29,17 @@ public class AudioService extends Service {
         phoneStateListen();
     }
 
-    @Nullable
     @Override
     public IBinder onBind(Intent intent) {
         recordPermission = intent.getBooleanExtra("record", false);
         db = AppDatabase.getInstance(getApplicationContext());
-        return null;
+        return new MyBinder();
+    }
+
+    public class MyBinder extends Binder {
+        AudioService getService() {
+            return AudioService.this;
+        }
     }
 
     @Override
