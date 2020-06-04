@@ -104,6 +104,10 @@ public class MySurface extends SurfaceView implements Callback {
         public int background(int i) {
             return Color.BLACK;
         }
+
+        public char animator(char ch) {
+            return (char)(ch & 1023);
+        }
     }
 
     public void stringAt(String s, float x, float y, AttributeMap color) {
@@ -117,7 +121,8 @@ public class MySurface extends SurfaceView implements Callback {
         float inx = x;//initial x
         float iny = y;
         for(int i = 0; i < s.length(); ++i) {
-            charAt(s.charAt(i), x, y, color.foreground(i), color.background(i));
+            charAt(color.animator(s.charAt(i)), x, y,
+                    color.foreground(i), color.background(i));
             if(i >= s.length()) break;
             x += 1F;//next
             if(x >= inx + w) {
