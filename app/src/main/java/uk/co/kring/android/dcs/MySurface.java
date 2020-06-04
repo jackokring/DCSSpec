@@ -69,8 +69,19 @@ public class MySurface extends SurfaceView implements Callback {
 
     @Override
     public boolean onTouchEvent(MotionEvent event) {
-        return super.onTouchEvent(event);
-        //perform click?
+        switch(event.getActionMasked()) {
+            case MotionEvent.ACTION_DOWN:
+            case MotionEvent.ACTION_MOVE:
+            case MotionEvent.ACTION_UP:
+                xPos = event.getX() / getWidth() *
+                        (float)(screen.getWidth() / UtilStatic.width);
+                yPos = event.getY() / getHeight() *
+                        (float)(screen.getHeight() / UtilStatic.height);
+                break;
+            default:
+                break;
+        }
+        return true;
     }
 
     public void charAt(char ch, float x, float y, int fColor, int bColor) {
@@ -170,19 +181,19 @@ public class MySurface extends SurfaceView implements Callback {
         stringAt(s.toString(), 0F, 0F, color);//new page
     }
 
-    public float x(float x) {//bmp px to width
-        return x / screen.getWidth() * getWidth();
+    float xPosO, yPosO;
+    float xPos, yPos;
+
+    public void setOffsetTouchXY(float x, float y) {
+        xPosO = x;
+        yPosO = y;
     }
 
-    public float y(float y) {//bmp px to height
-        return y / screen.getHeight() * getHeight();
+    public float getTouchX() {
+        return xPos - xPosO;
     }
 
-    public float ix(float x) {//bmp px from width
-        return x * screen.getWidth() / getWidth();
-    }
-
-    public float iy(float y) {//bmp px from height
-        return y * screen.getHeight() / getHeight();
+    public float getTouchY() {
+        return yPos - yPosO;
     }
 }
