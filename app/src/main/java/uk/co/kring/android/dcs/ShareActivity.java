@@ -74,11 +74,28 @@ public class ShareActivity extends AppCompatActivity {
         }
         File path = new File(getExternalFilesDir(null), "processed");
         File newFile = new File(path, processedName);
+        newFile.deleteOnExit();//keeping clean
         try {
             return new FileInputStream(newFile);
         } catch(Exception e) {
             error();
             return null;
+        }
+    }
+
+    public void renameFile(String name) {
+        if(processedName == null || name == null) {
+            error();
+        }
+        File path = new File(getExternalFilesDir(null), "processed");
+        File newFile = new File(path, processedName);
+        File newerFile = new File(path, name);
+        try {
+            if(newFile.renameTo(newerFile)) {
+                processedName = name;
+            }
+        } catch(Exception e) {
+            error();
         }
     }
 
