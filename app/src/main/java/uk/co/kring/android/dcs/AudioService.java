@@ -113,7 +113,7 @@ public class AudioService extends Service {
                 AudioFormat.ENCODING_PCM_16BIT,
                 AudioRecord.getMinBufferSize(
                         44100, AudioFormat.CHANNEL_IN_MONO,
-                        AudioFormat.ENCODING_PCM_16BIT * 2));
+                        AudioFormat.ENCODING_PCM_16BIT) * 2);
         sampleRateIn = ar.getSampleRate();
         ar.startRecording();
         isRecording = true;
@@ -140,11 +140,11 @@ public class AudioService extends Service {
         if(audioOut != null) return;
         @Deprecated
         AudioTrack at = new AudioTrack(AudioManager.STREAM_MUSIC,
-                AudioFormat.SAMPLE_RATE_UNSPECIFIED, AudioFormat.CHANNEL_IN_MONO,
+                AudioFormat.SAMPLE_RATE_UNSPECIFIED, AudioFormat.CHANNEL_OUT_MONO,
                 AudioFormat.ENCODING_PCM_16BIT,
                 AudioTrack.getMinBufferSize(
-                        44100, AudioFormat.CHANNEL_IN_MONO,
-                        AudioFormat.ENCODING_PCM_16BIT * 2),
+                        44100, AudioFormat.CHANNEL_OUT_MONO,
+                        AudioFormat.ENCODING_PCM_16BIT) * 2,
                 AudioTrack.MODE_STREAM);
         sampleRateOut = at.getSampleRate();
         isPlaying = true;
