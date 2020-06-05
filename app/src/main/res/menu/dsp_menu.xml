@@ -21,4 +21,11 @@
             android:onClick="onShowFilterAction"
             android:title="@string/filter_menu">
     </item>
+    <item
+            android:id="@+id/menu_action_vol"
+            android:icon="@drawable/ic_dsp"
+            app:showAsAction="ifRoom|withText"
+            android:onClick="onShowVolAction"
+            android:title="@string/filter_menu">
+    </item>
 </menu>

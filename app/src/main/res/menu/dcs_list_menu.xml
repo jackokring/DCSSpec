@@ -16,7 +16,7 @@
     </item>
     <item
             android:id="@+id/menu_action_dsp"
-            android:icon="@drawable/ic_dsp"
+            android:icon="@drawable/ic_filter"
             app:showAsAction="ifRoom|withText"
             android:onClick="onShowDSPAction"
             android:title="@string/dsp_activity">
