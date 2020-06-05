@@ -71,30 +71,34 @@ public class AudioService extends Service {
 
     //==================== PACKAGED
     short inBuff[], outBuff[];
-    float fInBuff[], fOutBuff[];
+    float fBuff[];
+    boolean processed = false;
     float gain = 1F;
 
     void readAudio(AudioRecord ar) {
+        if(processed) Thread.yield();
         int i = 0;
         while(i < inBuff.length) {
             //error?
             i += ar.read(inBuff, i, inBuff.length - i);//fill buffer
         }
         for(i = 0; i < inBuff.length; ++i) {
-            fInBuff[i] = gain * (float)inBuff[i];
+            fBuff[i] = gain * (float)inBuff[i];
         }
         //TODO: process immediate
+        processed = true;
     }
 
     void writeAudio(AudioTrack at) {
-        //TODO: if processed
+        if(!processed) Thread.yield();
         int i = 0;
         short val;
-        for(i = 0; i < fOutBuff.length; ++i) {
-            val = (short)fOutBuff[i];//clip?
+        for(i = 0; i < fBuff.length; ++i) {
+            val = (short)fBuff[i];//clip?
 
             outBuff[i] = val;
         }
+        processed = false;
         while(i < outBuff.length) {
             //error?
             i += at.write(outBuff, i, outBuff.length - i);
