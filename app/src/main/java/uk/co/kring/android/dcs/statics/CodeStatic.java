@@ -21,7 +21,7 @@ public class CodeStatic {
         ":;<=>?" +
         " !\"£$%^&\u020a";
 
-    static final char octals[] = {
+    static final char[] octals = {
         023, 025, 026, 031, 032, 043, 047, 051, 054, 065, 071, 072, 073, 074,
         0114, 0115, 0116, 0125, 0131, 0132, 0134, 0143, 0152, 0155, 0156, 0162, 0165, 0172, 0174,
         0306, 0311, 0315, 0331, 0343, 0346, 0351, 0364, 0365, 0371,
@@ -60,12 +60,12 @@ public class CodeStatic {
     public static final char UN_SYNC_OCTAL = 0662;//special to index code group
     public static final char CALL_SIGN = 530;
 
-    static final char coctals[] = {
+    static final char[] coctals = {
         0205, 0223, 0226, 0243, 0244, 0245, 0251, 0261, 0263, 0265, 0271,
         0606, 0612, 0624, 0627, 0631, 0632, 0654, 0662, 0664, 0306 //and LF on end
     };
 
-    static final String controlStr[] = {
+    static final String[] controlStr = {
         "R+", "R-", "G+", "G-", "B+", "B-", "UP", "DWN", "LFT", "RGT", "DEL",
         "SYN", "RPT", "RAK", "RAE", "RRI", "RRD", "OK", "UN", "CQ", "LF"
     };
@@ -307,5 +307,4 @@ public class CodeStatic {
             }
         }
     }
-
 }
