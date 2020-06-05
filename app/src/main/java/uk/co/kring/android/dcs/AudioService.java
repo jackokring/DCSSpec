@@ -10,6 +10,7 @@ import android.telephony.PhoneStateListener;
 import android.telephony.TelephonyManager;
 import uk.co.kring.android.dcs.room.AppDatabase;
 import uk.co.kring.android.dcs.statics.CodeStatic;
+import uk.co.kring.android.dcs.statics.DSPStatic;
 
 public class AudioService extends Service {
 
@@ -58,6 +59,10 @@ public class AudioService extends Service {
         //TODO
     }
 
+    public void setGain(int gainMaxScale) {
+        gain = DSPStatic.log(gainMaxScale, 1F, 4F);//8dB?
+    }
+
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         //TODO
@@ -65,12 +70,35 @@ public class AudioService extends Service {
     }
 
     //==================== PACKAGED
+    short inBuff[], outBuff[];
+    float fInBuff[], fOutBuff[];
+    float gain = 1F;
+
     void readAudio(AudioRecord ar) {
-        //TODO
+        int i = 0;
+        while(i < inBuff.length) {
+            //error?
+            i += ar.read(inBuff, i, inBuff.length - i);//fill buffer
+        }
+        for(i = 0; i < inBuff.length; ++i) {
+            fInBuff[i] = gain * (float)inBuff[i];
+        }
+        //TODO: process immediate
     }
 
     void writeAudio(AudioTrack at) {
-        //TODO
+        //TODO: if processed
+        int i = 0;
+        short val;
+        for(i = 0; i < fOutBuff.length; ++i) {
+            val = (short)fOutBuff[i];//clip?
+
+            outBuff[i] = val;
+        }
+        while(i < outBuff.length) {
+            //error?
+            i += at.write(outBuff, i, outBuff.length - i);
+        }
     }
 
     void getAudioIn() {
@@ -124,7 +152,7 @@ public class AudioService extends Service {
         }, "AudioPlayer");
         playingThread.start();
         at.play();
-        audioOut = at;;
+        audioOut = at;
     }
 
     void stopAudioOut() {

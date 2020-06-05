@@ -7,19 +7,24 @@ public class DSPStatic {
 
     //======================== PUBLIC INTERFACE
     //obtain mapped control values
-    public float lin(int val, float min, float max) {
+    public static float lin(int val, float min, float max) {
         float v = ((float)val) / (float)Integer.MAX_VALUE;
         return min + (max - min) * v;
     }
 
-    public float log(int val, float centre, float octaves) {
+    public static float log(int val, float centre, float octaves) {
         float v = lin(val, -octaves, octaves);
         return (float)Math.pow(2F, v) * centre;
     }
 
-    public float qk(int val, float min, float max) {
+    public static float qk(int val, float min, float max) {
         float v = lin(val, 1F / min, 1F / max);
         return 1 / v;//return k from Q
+    }
+
+    public interface DSP {
+        void process(float[] samples);
+        void setParams(int[] maxScaled);
     }
 
     /* 2P
@@ -28,7 +33,7 @@ public class DSPStatic {
                  s^2 + k * s + 1
      */
     //TWO POLE PENTA-VARIANT FILTER
-    public class TwoPole {
+    public class TwoPole implements DSP {
         float fs, f, t, u, k, tf, bl, bb, shelfCentre, lowHi, i;
 
         public TwoPole(float sampleRate) {
@@ -44,6 +49,14 @@ public class DSPStatic {
             shelfCentre = sc;
             i = inv;
             lowHi = lh;
+        }
+
+        public void setParams(int[] maxScaled) {
+            setFK(log(maxScaled[0], 500F, 4F),
+                    qk(maxScaled[1], 0F, 10F),
+                    lin(maxScaled[2], 0F, 1F),
+                    lin(maxScaled[3], 0F, 1F),
+                    lin(maxScaled[4], 0F, 1F));
         }
 
         public void process(float[] samples) {
@@ -64,24 +77,28 @@ public class DSPStatic {
 
     /* 1P H(s) = 1 / (s + fb) */
     //ONE POLE TRI-VARIANT FILTER
-    public class OnePole {
-        float fs, f, f2, k, b, lowHi;
+    public class OnePole implements DSP {
+        float fs, f, f2, b, lowHi;
 
         public OnePole(float sampleRate) {
             fs = sampleRate;
         }
 
-        public void setFK(float fc, float fb, float lh) {//fb feedback not k*s denominator
+        public void setFK(float fc, float lh) {//fb feedback not k*s denominator
             f   = (float)Math.tan(PI * fc / fs);
-            f2   = 1 / (1 + fb * f);
-            k = fb;
+            f2   = 1 / (1 + f);
             lowHi = lh;
+        }
+
+        public void setParams(int[] maxScaled) {
+            setFK(log(maxScaled[0], 500F, 4F),
+                    lin(maxScaled[1], 0F, 1F));
         }
 
         public void process(float[] samples) {
             for(int i = 0; i < samples.length; ++i) {
                 float out = (f * samples[i] + b) * f2;
-                b = f * (samples[i] - k * out) + out;
+                b = f * (samples[i] - out) + out;
                 samples[i] = out * (1F - lowHi) + (samples[i] - out) * lowHi;;//lpf default
             }
         }
