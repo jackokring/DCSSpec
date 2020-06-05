@@ -1,7 +1,11 @@
 package uk.co.kring.android.dcs;
 
+import android.content.ComponentName;
+import android.content.Context;
 import android.content.Intent;
+import android.content.ServiceConnection;
 import android.os.Bundle;
+import android.os.IBinder;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -18,8 +22,25 @@ public class DSPActivity extends AppCompatActivity {
     };
 
     int algorithm = 0;
+    AudioService audio;
+
+    ServiceConnection connection = new ServiceConnection() {
+
+        @Override
+        public void onServiceConnected(ComponentName className,
+                                       IBinder service) {
+            audio = ((AudioService.MyBinder)service).getService();
+        }
+
+        @Override
+        public void onServiceDisconnected(ComponentName componentName) {
+            audio = null;
+        }
+    };
 
     //============================ PUBLIC INTERFACE
+    public static final int DSP_FIVE_FILTER = 0;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -27,11 +48,13 @@ public class DSPActivity extends AppCompatActivity {
         la.makeControls();
         ((ListView)findViewById(R.id.dcs_list)).setAdapter(la);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);//back
+        Intent intent = new Intent(this, AudioService.class);
+        bindService(intent, connection, Context.BIND_AUTO_CREATE);
     }
 
     @Override
     protected void onDestroy() {
-        stopService(new Intent(this, AudioService.class));
+        unbindService(connection);
         super.onDestroy();
     }
 
@@ -43,16 +66,17 @@ public class DSPActivity extends AppCompatActivity {
     }
 
     public void onShowMuteAction(MenuItem item) {
-
+        if(audio != null) audio.setMute(true);
     }
 
     public void onShowPassThroughAction(MenuItem item) {
-
+        if(audio != null) audio.setMute(false);
     }
 
     public void onShowFilterAction(MenuItem item) {
         algorithm = (algorithm + 1) % labels.length;
         ((ListView)findViewById(R.id.dcs_list)).invalidate();
+        if(audio != null) audio.setDSPAlg(algorithm, la.controls);
     }
 
     //============================= PACKAGED
@@ -83,7 +107,6 @@ public class DSPActivity extends AppCompatActivity {
                 @Override
                 public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
                     controls[position] = i;
-                    //TODO: update service
                 }
 
                 @Override

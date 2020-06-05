@@ -50,6 +50,14 @@ public class AudioService extends Service {
         stopAudioOut();
     }
 
+    public void setDSPAlg(int i, int[] c) {
+        //TODO
+    }
+
+    public void setMute(boolean m) {
+        //TODO
+    }
+
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         //TODO
