@@ -6,11 +6,6 @@ public class CodeStatic {
 
     static CodeStatic p;
 
-    public static CodeStatic getInstance() {
-        if(p != null) return p;
-        return new CodeStatic();
-    }
-
     int codes[] = new int[1024];
     byte shifts[] = new byte[1024];//shift future for sync
     public int primaries[];
@@ -41,29 +36,29 @@ public class CodeStatic {
         //sy, rp, ra, re, ri, rd, ok, un, cq
     //};
 
-    static final char RED_PLUS = 512;//control code offset 512 in 0 based @
-    static final char RED_MINUS = 513;
-    static final char GREEN_PLUS = 514;
-    static final char GREEN_MINUS = 515;
-    static final char BLUE_PLUS = 516;
-    static final char BLUE_MINUS = 517;
+    public static final char RED_PLUS = 512;//control code offset 512 in 0 based @
+    public static final char RED_MINUS = 513;
+    public static final char GREEN_PLUS = 514;
+    public static final char GREEN_MINUS = 515;
+    public static final char BLUE_PLUS = 516;
+    public static final char BLUE_MINUS = 517;
 
-    static final char UP = 518;
-    static final char DOWN = 519;
-    static final char LEFT = 520;
-    static final char RIGHT = 521;
+    public static final char UP = 518;
+    public static final char DOWN = 519;
+    public static final char LEFT = 520;
+    public static final char RIGHT = 521;
 
-    static final char SYNC_IDLE = 522;
-    static final char SYNC_OCTAL = 0606;//special to index no char in code
-    static final char REPEAT = 523;
-    static final char REPEAT_ACK = 524;
-    static final char REPEAT_ACK_ERR = 525;
-    static final char RATE_INC = 526;
-    static final char RATE_DEC = 527;
-    static final char RATE_ACCEPT = 528;
-    static final char UN_SYNC = 529;
-    static final char UN_SYNC_OCTAL = 0662;//special to index code group
-    static final char CALL_SIGN = 530;
+    public static final char SYNC_IDLE = 522;
+    public static final char SYNC_OCTAL = 0606;//special to index no char in code
+    public static final char REPEAT = 523;
+    public static final char REPEAT_ACK = 524;
+    public static final char REPEAT_ACK_ERR = 525;
+    public static final char RATE_INC = 526;
+    public static final char RATE_DEC = 527;
+    public static final char RATE_ACCEPT = 528;
+    public static final char UN_SYNC = 529;
+    public static final char UN_SYNC_OCTAL = 0662;//special to index code group
+    public static final char CALL_SIGN = 530;
 
     static final char coctals[] = {
         0205, 0223, 0226, 0243, 0244, 0245, 0251, 0261, 0263, 0265, 0271,
@@ -77,6 +72,12 @@ public class CodeStatic {
 
     static final String base64Index =
             "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
+
+    //============================== PUBLIC INTERFACE
+    public static CodeStatic getInstance() {
+        if(p != null) return p;
+        return new CodeStatic();
+    }
 
     public CodeStatic() {
         genCodes();
@@ -95,95 +96,6 @@ public class CodeStatic {
             input[i] = (byte)base64Index.charAt(input[i]);
         }
         return Base64.decode(input, Base64.NO_PADDING | Base64.NO_WRAP);
-    }
-
-    static final int BITS_23 = 0x7FFFFF;
-    static final int BITS_10 = 1023;
-    static final int BAD_MASK = 0x80000000;
-
-    //CODE GENERATION
-    void genCodes() {
-        for(int i = 0; i < 512; ++i) {
-            codes[i] = i + (4 << 9);//base code
-            boolean C1 = (i & 1) != 0;
-            boolean C2 = (i & 2) != 0;
-            boolean C3 = (i & 4) != 0;
-            boolean C4 = (i & 8) != 0;
-            boolean C5 = (i & 16) != 0;
-            boolean C6 = (i & 32) != 0;
-            boolean C7 = (i & 64) != 0;
-            boolean C8 = (i & 128) != 0;
-            boolean C9 = (i & 256) != 0;
-            boolean P[] = new boolean[11];
-            P[0] = C1 ^ C2 ^ C3 ^ C4 ^ C5 ^ C8;
-            P[1] = !(C2 ^ C3 ^ C4 ^ C5 ^ C6 ^ C9);
-            P[2] = C1 ^ C2 ^ C6 ^ C7 ^ C8;
-            P[3] = !(C2 ^ C3 ^ C7 ^ C8 ^ C9);
-            P[4] = !(C1 ^ C2 ^ C5 ^ C9);
-            P[5] = !(C1 ^ C4 ^ C5 ^ C6 ^ C8);
-            P[6] = C1 ^ C3 ^ C4 ^ C6 ^ C7 ^ C8 ^ C9;
-            P[7] = C2 ^ C4 ^ C5 ^ C7 ^ C8 ^ C9;
-            P[8] = C3 ^ C5 ^ C6 ^ C8 ^ C9;
-            P[9] = !(C4 ^ C6 ^ C7 ^ C9);
-            P[10] = !(C1 ^ C2 ^ C3 ^ C4 ^ C7);
-            int c = 0;
-            for(int j = 0; j < 11; ++j) {
-                if(P[j]) c+= (1 << j);
-            }
-            c <<= 12;//SHIFT
-            codes[i] += c;
-            codes[BITS_10 - i] = (~codes[i]) & BITS_23;//23 BIT INVERSE
-        }
-        int c = 0;//BASE GROUP
-        for(int i = 0; i < BITS_10 + 1; ++i) {
-            if(codes[i] >> 23 != 0) {
-                continue;//already assigned group
-            }
-            int s = codes[i];//current code
-            codes[i] += ((++c) << 23);//assign new group
-            shifts[i] = 0;
-            for(int j = 0; j < 22; ++j) {
-                s = ((s << 1) + (s >> 22)) & BITS_23;//rotate
-                int idx = s & BITS_10;
-                if(codes[idx] >> 23 != 0) {
-                    continue;//already assigned group
-                }
-                //check same code
-                if((codes[idx] & BITS_23) != s) {
-                    continue;//is not same code
-                }
-                codes[idx] += (c << 23);//assign same group
-                shifts[idx] = (byte)(j + 1);//number of bits to rotate code right
-            }
-        }
-        for(int i = 0; i < BITS_10 + 1; ++i) {
-            codes[i] -= BITS_23 + 1;//map code down one
-        }
-        primaries = new int[c];
-        c = 0;
-        for(int i = 0; i < BITS_10 + 1; ++i) {
-            if(codes[i] >> 23 == c) {
-                primaries[c] = i;//look up
-                boolean f = false;
-                if(i >= 512) {
-                    for(int j = 0; j < 512; ++j) {
-                        if(codes[j] >> 23 == c) {
-                            f = true;//inverse
-                            break;
-                        }
-                    }
-                } else {
-                    for(int j = 0; j < 512; ++j) {
-                        if(codes[j + 512] >> 23 == c) {
-                            f = true;//inverse
-                            break;
-                        }
-                    }
-                }
-                if(!f) codes[i] += BAD_MASK;//code no inverse
-                c++;
-            }
-        }
     }
 
     public String asBinary(int code) {
@@ -305,4 +217,95 @@ public class CodeStatic {
         }
         return base64Decode(out);
     }
+
+    //======================================= PACKAGED
+    static final int BITS_23 = 0x7FFFFF;
+    static final int BITS_10 = 1023;
+    static final int BAD_MASK = 0x80000000;
+
+    //CODE GENERATION
+    void genCodes() {
+        for(int i = 0; i < 512; ++i) {
+            codes[i] = i + (4 << 9);//base code
+            boolean C1 = (i & 1) != 0;
+            boolean C2 = (i & 2) != 0;
+            boolean C3 = (i & 4) != 0;
+            boolean C4 = (i & 8) != 0;
+            boolean C5 = (i & 16) != 0;
+            boolean C6 = (i & 32) != 0;
+            boolean C7 = (i & 64) != 0;
+            boolean C8 = (i & 128) != 0;
+            boolean C9 = (i & 256) != 0;
+            boolean P[] = new boolean[11];
+            P[0] = C1 ^ C2 ^ C3 ^ C4 ^ C5 ^ C8;
+            P[1] = !(C2 ^ C3 ^ C4 ^ C5 ^ C6 ^ C9);
+            P[2] = C1 ^ C2 ^ C6 ^ C7 ^ C8;
+            P[3] = !(C2 ^ C3 ^ C7 ^ C8 ^ C9);
+            P[4] = !(C1 ^ C2 ^ C5 ^ C9);
+            P[5] = !(C1 ^ C4 ^ C5 ^ C6 ^ C8);
+            P[6] = C1 ^ C3 ^ C4 ^ C6 ^ C7 ^ C8 ^ C9;
+            P[7] = C2 ^ C4 ^ C5 ^ C7 ^ C8 ^ C9;
+            P[8] = C3 ^ C5 ^ C6 ^ C8 ^ C9;
+            P[9] = !(C4 ^ C6 ^ C7 ^ C9);
+            P[10] = !(C1 ^ C2 ^ C3 ^ C4 ^ C7);
+            int c = 0;
+            for(int j = 0; j < 11; ++j) {
+                if(P[j]) c+= (1 << j);
+            }
+            c <<= 12;//SHIFT
+            codes[i] += c;
+            codes[BITS_10 - i] = (~codes[i]) & BITS_23;//23 BIT INVERSE
+        }
+        int c = 0;//BASE GROUP
+        for(int i = 0; i < BITS_10 + 1; ++i) {
+            if(codes[i] >> 23 != 0) {
+                continue;//already assigned group
+            }
+            int s = codes[i];//current code
+            codes[i] += ((++c) << 23);//assign new group
+            shifts[i] = 0;
+            for(int j = 0; j < 22; ++j) {
+                s = ((s << 1) + (s >> 22)) & BITS_23;//rotate
+                int idx = s & BITS_10;
+                if(codes[idx] >> 23 != 0) {
+                    continue;//already assigned group
+                }
+                //check same code
+                if((codes[idx] & BITS_23) != s) {
+                    continue;//is not same code
+                }
+                codes[idx] += (c << 23);//assign same group
+                shifts[idx] = (byte)(j + 1);//number of bits to rotate code right
+            }
+        }
+        for(int i = 0; i < BITS_10 + 1; ++i) {
+            codes[i] -= BITS_23 + 1;//map code down one
+        }
+        primaries = new int[c];
+        c = 0;
+        for(int i = 0; i < BITS_10 + 1; ++i) {
+            if(codes[i] >> 23 == c) {
+                primaries[c] = i;//look up
+                boolean f = false;
+                if(i >= 512) {
+                    for(int j = 0; j < 512; ++j) {
+                        if(codes[j] >> 23 == c) {
+                            f = true;//inverse
+                            break;
+                        }
+                    }
+                } else {
+                    for(int j = 0; j < 512; ++j) {
+                        if(codes[j + 512] >> 23 == c) {
+                            f = true;//inverse
+                            break;
+                        }
+                    }
+                }
+                if(!f) codes[i] += BAD_MASK;//code no inverse
+                c++;
+            }
+        }
+    }
+
 }

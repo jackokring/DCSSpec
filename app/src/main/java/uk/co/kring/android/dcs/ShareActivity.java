@@ -23,6 +23,7 @@ public class ShareActivity extends AppCompatActivity {
     Uri current;
     String processedName;
 
+    //============================= PUBLIC INTERFACE
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -52,79 +53,11 @@ public class ShareActivity extends AppCompatActivity {
         }
     }
 
-    public void handleFile(InputStream in, String ext, FileProcessor fp) {
-        String old = processedName;
-        processedName = UUID.randomUUID().toString() + ext;
-        File path = new File(getExternalFilesDir(null), "processed");
-        File newFile = new File(path, processedName);
-        try {
-            OutputStream os = new FileOutputStream(newFile);
-            fp.process(in, os, old);//use old name as useful maybe
-            os.flush();
-            os.close();
-        } catch(Exception e) {
-            error();
-        }
-    }
-
-    public InputStream openFile() {
-        if(processedName == null) {
-            error();
-            return null;
-        }
-        File path = new File(getExternalFilesDir(null), "processed");
-        File newFile = new File(path, processedName);
-        newFile.deleteOnExit();//keeping clean
-        try {
-            return new FileInputStream(newFile);
-        } catch(Exception e) {
-            error();
-            return null;
-        }
-    }
-
-    public void renameFile(String name) {
-        if(processedName == null || name == null) {
-            error();
-        }
-        File path = new File(getExternalFilesDir(null), "processed");
-        File newFile = new File(path, processedName);
-        File newerFile = new File(path, name);
-        try {
-            if(newFile.renameTo(newerFile)) {
-                processedName = name;
-            }
-        } catch(Exception e) {
-            error();
-        }
-    }
-
-    public class FileProcessor {
-        public void process(InputStream is, OutputStream os, String oldName)
-                throws IOException {
-            int i;
-            while((i = is.read()) != -1) {
-                os.write(i);//copy
-            }
-        }
-    }
-
-    //MENU ITEMS
+    //================================ MENU ITEMS
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.share_menu, menu);
         return true;
-    }
-
-    public void error() {
-        UtilStatic.dialog(this, R.string.share_title,
-                R.drawable.ic_share,
-                getString(R.string.share),
-                new DialogInterface.OnClickListener() {//ok
-                    public void onClick(DialogInterface dialog, int whichButton) {
-                        dialog.dismiss();
-                    }
-                }, null, null);
     }
 
     public void onShowShareAction(MenuItem item) {
@@ -142,5 +75,74 @@ public class ShareActivity extends AppCompatActivity {
         i.putExtra(Intent.EXTRA_STREAM, contentUri);
         i.setType(getContentResolver().getType(contentUri));
         startActivity(Intent.createChooser(i, null));
+    }
+
+    //=========================== PACKAGED
+    void error() {
+        UtilStatic.dialog(this, R.string.share_title,
+                R.drawable.ic_share,
+                getString(R.string.share),
+                new DialogInterface.OnClickListener() {//ok
+                    public void onClick(DialogInterface dialog, int whichButton) {
+                        dialog.dismiss();
+                    }
+                }, null, null);
+    }
+
+    void handleFile(InputStream in, String ext, FileProcessor fp) {
+        String old = processedName;
+        processedName = UUID.randomUUID().toString() + ext;
+        File path = new File(getExternalFilesDir(null), "processed");
+        File newFile = new File(path, processedName);
+        try {
+            OutputStream os = new FileOutputStream(newFile);
+            fp.process(in, os, old);//use old name as useful maybe
+            os.flush();
+            os.close();
+        } catch(Exception e) {
+            error();
+        }
+    }
+
+    InputStream openFile() {
+        if(processedName == null) {
+            error();
+            return null;
+        }
+        File path = new File(getExternalFilesDir(null), "processed");
+        File newFile = new File(path, processedName);
+        newFile.deleteOnExit();//keeping clean
+        try {
+            return new FileInputStream(newFile);
+        } catch(Exception e) {
+            error();
+            return null;
+        }
+    }
+
+    void renameFile(String name) {
+        if(processedName == null || name == null) {
+            error();
+        }
+        File path = new File(getExternalFilesDir(null), "processed");
+        File newFile = new File(path, processedName);
+        File newerFile = new File(path, name);
+        try {
+            if(newFile.renameTo(newerFile)) {
+                processedName = name;
+            }
+        } catch(Exception e) {
+            error();
+        }
+    }
+
+    class FileProcessor {
+        public void process(InputStream is, OutputStream os, String oldName)
+                throws IOException {
+            int i;
+            while((i = is.read()) != -1) {
+                os.write(i);//copy
+            }
+        }
     }
 }

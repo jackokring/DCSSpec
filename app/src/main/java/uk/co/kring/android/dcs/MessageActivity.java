@@ -8,6 +8,7 @@ public class MessageActivity extends AppCompatActivity {
     int id;
     String title;
 
+    //============================ PUBLIC INTERFACE
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

@@ -26,12 +26,12 @@ public class DCSListActivity extends AppCompatActivity {
     CodeStatic dcs = CodeStatic.getInstance();
 
     // Requesting permission to RECORD_AUDIO
-    public boolean permissionToRecordAccepted = false;
-    private static final int REQUEST_RECORD_AUDIO_PERMISSION = 200;
-    private String permissions[] = { Manifest.permission.RECORD_AUDIO };
-    private AudioService audio;
+    boolean permissionToRecordAccepted = false;
+    static final int REQUEST_RECORD_AUDIO_PERMISSION = 200;
+    String permissions[] = { Manifest.permission.RECORD_AUDIO };
+    AudioService audio;
 
-    private ServiceConnection connection = new ServiceConnection() {
+    ServiceConnection connection = new ServiceConnection() {
 
         @Override
         public void onServiceConnected(ComponentName className,
@@ -46,6 +46,7 @@ public class DCSListActivity extends AppCompatActivity {
         }
     };
 
+    //==================== PUBLIC INTERFACE
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
                                            @NonNull int[] grantResults) {
@@ -79,6 +80,56 @@ public class DCSListActivity extends AppCompatActivity {
         UtilStatic.googleAPICheck(this);
     } */
 
+    @Override
+    protected void onDestroy() {
+        if(audio != null) audio.stopAudioAll();//end processing on exit
+        unbindService(connection);
+        super.onDestroy();
+    }
+
+    //================================== MENU ITEMS
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.dcs_list_menu, menu);
+        return true;
+    }
+
+    public void onShowMessagesAction(MenuItem mi) {
+        Intent intent = new Intent(DCSListActivity.this,
+                MessageListActivity.class);
+        startActivity(intent);
+    }
+
+    public void onShowCommunicateAction(MenuItem item) {
+        Intent intent = new Intent(DCSListActivity.this,
+                SurfaceActivity.class);
+        startActivity(intent);
+    }
+
+    public void onShowDSPAction(MenuItem item) {
+        Intent intent = new Intent(DCSListActivity.this,
+                Activity.class);
+        startActivity(intent);
+    }
+
+    public void onShowSettingsAction(MenuItem item) {
+        Intent intent = new Intent(DCSListActivity.this,
+                SettingsActivity.class);
+        startActivity(intent);
+    }
+
+    public void onShowAboutAction(MenuItem item) {
+        UtilStatic.dialog(this, R.string.about_title,
+                R.drawable.ic_about,
+                getString(R.string.about) + getString(R.string.version),
+                new DialogInterface.OnClickListener() {//ok
+                    public void onClick(DialogInterface dialog, int whichButton) {
+                        dialog.dismiss();
+                    }
+                }, null, null);
+    }
+
+    //============================== PACKAGED
     class MyAdapter extends BaseAdapter {
 
         @Override
@@ -124,53 +175,5 @@ public class DCSListActivity extends AppCompatActivity {
         public long getItemId(int i) {
             return dcs.primaries[i];
         }
-    }
-
-    @Override
-    protected void onDestroy() {
-        unbindService(connection);
-        super.onDestroy();
-    }
-
-    //MENU ITEMS
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.dcs_list_menu, menu);
-        return true;
-    }
-
-    public void onShowMessagesAction(MenuItem mi) {
-        Intent intent = new Intent(DCSListActivity.this,
-                MessageListActivity.class);
-        startActivity(intent);
-    }
-
-    public void onShowCommunicateAction(MenuItem item) {
-        Intent intent = new Intent(DCSListActivity.this,
-                SurfaceActivity.class);
-        startActivity(intent);
-    }
-
-    public void onShowDSPAction(MenuItem item) {
-        Intent intent = new Intent(DCSListActivity.this,
-                Activity.class);
-        startActivity(intent);
-    }
-
-    public void onShowSettingsAction(MenuItem item) {
-        Intent intent = new Intent(DCSListActivity.this,
-                SettingsActivity.class);
-        startActivity(intent);
-    }
-
-    public void onShowAboutAction(MenuItem item) {
-        UtilStatic.dialog(this, R.string.about_title,
-                R.drawable.ic_about,
-                getString(R.string.about) + getString(R.string.version),
-                new DialogInterface.OnClickListener() {//ok
-                    public void onClick(DialogInterface dialog, int whichButton) {
-                        dialog.dismiss();
-                    }
-                }, null, null);
     }
 }

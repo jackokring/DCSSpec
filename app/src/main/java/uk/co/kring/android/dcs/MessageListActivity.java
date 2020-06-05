@@ -16,6 +16,7 @@ public class MessageListActivity extends AppCompatActivity {
     MyAdapter la = new MyAdapter();
     AppDatabase db;
 
+    //========================= PUBLIC INTERFACE
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -27,6 +28,7 @@ public class MessageListActivity extends AppCompatActivity {
         //TODO: ?
     }
 
+    //=========================== PACKAGED
     class MyAdapter extends BaseAdapter {
 
         @Override

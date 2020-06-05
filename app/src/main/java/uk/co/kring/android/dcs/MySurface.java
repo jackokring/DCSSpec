@@ -11,6 +11,7 @@ import androidx.core.graphics.BlendModeCompat;
 import uk.co.kring.android.dcs.statics.UtilStatic;
 
 public class MySurface extends SurfaceView implements Callback {
+
     Bitmap[] font;
     Bitmap screen;
     Canvas drawing;
@@ -18,6 +19,7 @@ public class MySurface extends SurfaceView implements Callback {
     Paint bg = new Paint();
     Rect screenRect, viewRect, bottom, top;
 
+    //============================== PUBLIC INTERFACE
     public MySurface(Context context) {
         super(context);
         getHolder().addCallback(this);

@@ -10,31 +10,12 @@ import uk.co.kring.android.dcs.statics.UtilStatic;
 
 public class DataService extends FirebaseMessagingService {
 
+    //=========================== PUBLIC INTERFACE
     @Override
     public void onNewToken(String token) {
-
+        //TODO
         // Instance ID token to your app server.
         //sendRegistrationToServer(token);
-    }
-
-    public void subscribe(String s) {
-        FirebaseMessaging.getInstance().subscribeToTopic(s)
-            .addOnCompleteListener(new OnCompleteListener<Void>() {
-                @Override
-                public void onComplete(Task<Void> task) {
-
-                }
-            });
-    }
-
-    public void unsubscribe(String s) {
-        FirebaseMessaging.getInstance().unsubscribeFromTopic(s)
-            .addOnCompleteListener(new OnCompleteListener<Void>() {
-                @Override
-                public void onComplete(Task<Void> task) {
-
-                }
-            });
     }
 
     @Override
@@ -48,12 +29,33 @@ public class DataService extends FirebaseMessagingService {
         }
     }
 
-    public void onDataPacket(Bundle data) {
-
-    }
-
     @Override
     public void onDeletedMessages() {//sync state as offline long time
         super.onDeletedMessages();
+    }
+
+    //================================ PACKAGED
+    void subscribe(String s) {
+        FirebaseMessaging.getInstance().subscribeToTopic(s)
+                .addOnCompleteListener(new OnCompleteListener<Void>() {
+                    @Override
+                    public void onComplete(Task<Void> task) {
+
+                    }
+                });
+    }
+
+    void unsubscribe(String s) {
+        FirebaseMessaging.getInstance().unsubscribeFromTopic(s)
+                .addOnCompleteListener(new OnCompleteListener<Void>() {
+                    @Override
+                    public void onComplete(Task<Void> task) {
+
+                    }
+                });
+    }
+
+    public void onDataPacket(Bundle data) {
+        //TODO
     }
 }

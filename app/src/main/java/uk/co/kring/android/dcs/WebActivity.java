@@ -15,6 +15,7 @@ public class WebActivity extends AppCompatActivity {
 
     SwipeRefreshLayout swipeRefreshLayout;
 
+    //====================== PUBLIC INTERFACE
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -39,11 +40,29 @@ public class WebActivity extends AppCompatActivity {
         webView.loadUrl("file:///android_asset/index.html");
     }
 
-    public class WebAppViewClient extends WebViewClient {
+    //========================== PACKAGED
+    class WebAppInterface {
+        //TODO
+        Context mContext;
+
+        /** Instantiate the interface and set the context */
+        WebAppInterface(Context c) {
+            mContext = c;
+        }
+
+        /** Show a toast from the web page */
+        @JavascriptInterface
+        public void showToast(String toast) {
+            UtilStatic.toast(mContext, toast);
+        }
+    }
+
+    class WebAppViewClient extends WebViewClient {
 
         @Override
         @SuppressWarnings("deprecation")
         public boolean shouldOverrideUrlLoading(WebView view, String url) {
+            //TODO
             if ("www.example.com".equals(Uri.parse(url).getHost())) {
                 // This is my website, so do not override; let my WebView load the page
                 return false;
@@ -58,21 +77,6 @@ public class WebActivity extends AppCompatActivity {
         @TargetApi(Build.VERSION_CODES.N)
         public boolean shouldOverrideUrlLoading(WebView view, WebResourceRequest request) {
             return shouldOverrideUrlLoading(view, request.getUrl().toString());
-        }
-    }
-
-    public class WebAppInterface {
-        Context mContext;
-
-        /** Instantiate the interface and set the context */
-        WebAppInterface(Context c) {
-            mContext = c;
-        }
-
-        /** Show a toast from the web page */
-        @JavascriptInterface
-        public void showToast(String toast) {
-            UtilStatic.toast(mContext, toast);
         }
     }
 }

@@ -11,6 +11,7 @@ public class DCSActivity extends AppCompatActivity {
     int codes[];
     CodeStatic dcs = CodeStatic.getInstance();
 
+    //======================== PUBLIC INTERFACE
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

@@ -9,6 +9,7 @@ import java.security.spec.X509EncodedKeySpec;
 
 public class CallSignStatic {
 
+    //================================= PUBLIC INTERFACE
     public static KeyPair getKeys() throws NoSuchAlgorithmException {
         // Generate a 1024-bit
         KeyPairGenerator keyGenerator = KeyPairGenerator.getInstance("DSA");

@@ -35,6 +35,12 @@ import java.util.Map;
 
 public class UtilStatic {
 
+    static Bitmap f;
+    static GoogleApiAvailability google;
+    static FirebaseAnalytics analytics;
+    static FirebaseRemoteConfig config;
+
+    //================================= PUBLIC INTERFACE
     @SuppressWarnings("deprecation")
     public static void dialog(Context here, int title, int icon, String text,
                               DialogInterface.OnClickListener ok,
@@ -100,7 +106,6 @@ public class UtilStatic {
         return f;
     }
 
-    static Bitmap f;
     public final static int width = 8;
     public final static int height = 10;
 
@@ -121,8 +126,6 @@ public class UtilStatic {
         }
         return arr;//font array
     }
-
-    static GoogleApiAvailability google;
 
     public static boolean googleAPI() {
         return google != null;
@@ -147,8 +150,6 @@ public class UtilStatic {
                 });
         }
     }
-
-    static FirebaseRemoteConfig config;
 
     static void fetchRemoteConfig(Activity here) {
         FirebaseRemoteConfig rc = FirebaseRemoteConfig.getInstance();
@@ -190,8 +191,6 @@ public class UtilStatic {
         if(config != null) return config.getString(key);
         return unset;
     }
-
-    static FirebaseAnalytics analytics;
 
     public static void postAnalytic(Context c, Bundle b) {
         if(analytics == null) {

@@ -13,12 +13,13 @@ public class DSPActivity extends AppCompatActivity {
 
     MyAdapter la = new MyAdapter();
 
-    public String[][] labels = {
+    String[][] labels = {
             { "Centre Frequency", "Resonant Q", "Invert", "Focus", "Low High Mix" }
     };
 
-    public int algorithm = 0;
+    int algorithm = 0;
 
+    //============================ PUBLIC INTERFACE
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -28,6 +29,33 @@ public class DSPActivity extends AppCompatActivity {
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);//back
     }
 
+    @Override
+    protected void onDestroy() {
+        stopService(new Intent(this, AudioService.class));
+        super.onDestroy();
+    }
+
+    //=========================== MENU ITEMS
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.dsp_menu, menu);
+        return true;
+    }
+
+    public void onShowMuteAction(MenuItem item) {
+
+    }
+
+    public void onShowPassThroughAction(MenuItem item) {
+
+    }
+
+    public void onShowFilterAction(MenuItem item) {
+        algorithm = (algorithm + 1) % labels.length;
+        ((ListView)findViewById(R.id.dcs_list)).invalidate();
+    }
+
+    //============================= PACKAGED
     class MyAdapter extends BaseAdapter {
 
         public void makeControls() {
@@ -48,7 +76,7 @@ public class DSPActivity extends AppCompatActivity {
             }
 
             ((TextView) convertView.findViewById(R.id.name))
-                .setText(labels[algorithm][position]);
+                    .setText(labels[algorithm][position]);
             SeekBar sb = ((SeekBar) convertView.findViewById(R.id.control));
             sb.setMax(Integer.MAX_VALUE);
             sb.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
@@ -85,31 +113,5 @@ public class DSPActivity extends AppCompatActivity {
         public long getItemId(int i) {
             return i;
         }
-    }
-
-    @Override
-    protected void onDestroy() {
-        stopService(new Intent(this, AudioService.class));
-        super.onDestroy();
-    }
-
-    //MENU ITEMS
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.dsp_menu, menu);
-        return true;
-    }
-
-    public void onShowMuteAction(MenuItem item) {
-
-    }
-
-    public void onShowPassThroughAction(MenuItem item) {
-
-    }
-
-    public void onShowFilterAction(MenuItem item) {
-        algorithm = (algorithm + 1) % labels.length;
-        ((ListView)findViewById(R.id.dcs_list)).invalidate();
     }
 }

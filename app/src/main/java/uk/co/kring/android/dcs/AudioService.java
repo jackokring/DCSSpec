@@ -8,13 +8,11 @@ import android.os.Binder;
 import android.os.IBinder;
 import android.telephony.PhoneStateListener;
 import android.telephony.TelephonyManager;
-import androidx.core.app.NotificationManagerCompat;
 import uk.co.kring.android.dcs.room.AppDatabase;
 import uk.co.kring.android.dcs.statics.CodeStatic;
 
 public class AudioService extends Service {
 
-    NotificationManagerCompat nm;
     CodeStatic dcs = CodeStatic.getInstance();
     AppDatabase db;
     boolean recordPermission;
@@ -25,6 +23,7 @@ public class AudioService extends Service {
     AudioTrack audioOut;
     AudioRecord audioIn;
 
+    //===================== PUBLIC INTERFACE
     public AudioService() {
         phoneStateListen();
     }
@@ -46,20 +45,27 @@ public class AudioService extends Service {
         recordPermission = rp;
     }
 
+    public void stopAudioAll() {
+        stopAudioIn();
+        stopAudioOut();
+    }
+
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
+        //TODO
         return super.onStartCommand(intent, flags, startId);
     }
 
-    public void readAudio(AudioRecord ar) {
-
+    //==================== PACKAGED
+    void readAudio(AudioRecord ar) {
+        //TODO
     }
 
-    public void writeAudio(AudioTrack at) {
-
+    void writeAudio(AudioTrack at) {
+        //TODO
     }
 
-    public void getAudioIn() {
+    void getAudioIn() {
         if(audioIn != null) return;
         if(!recordPermission) return;
         AudioRecord ar = new AudioRecord(MediaRecorder.AudioSource.MIC,
@@ -81,7 +87,7 @@ public class AudioService extends Service {
         audioIn = ar;
     }
 
-    public void stopAudioIn() {
+    void stopAudioIn() {
         if (audioIn != null) {
             isRecording = false;
             audioIn.stop();
@@ -90,7 +96,7 @@ public class AudioService extends Service {
         }
     }
 
-    public void getAudioOut() {
+    void getAudioOut() {
         if(audioOut != null) return;
         @Deprecated
         AudioTrack at = new AudioTrack(AudioManager.STREAM_MUSIC,
@@ -113,7 +119,7 @@ public class AudioService extends Service {
         audioOut = at;;
     }
 
-    public void stopAudioOut() {
+    void stopAudioOut() {
         if (audioOut != null) {
             isPlaying = false;
             audioOut.stop();
@@ -122,14 +128,13 @@ public class AudioService extends Service {
         }
     }
 
-    public void phoneStateListen() {
+    void phoneStateListen() {
         PhoneStateListener psl = new PhoneStateListener() {
             @Override
             public void onCallStateChanged(int state, String incomingNumber) {
                 if (state == TelephonyManager.CALL_STATE_RINGING ||
                         state == TelephonyManager.CALL_STATE_OFFHOOK) {
-                    stopAudioIn();
-                    stopAudioOut();
+                    stopAudioAll();
                 }
                 super.onCallStateChanged(state, incomingNumber);
             }

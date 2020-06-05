@@ -5,6 +5,7 @@ import static java.lang.Math.expm1;
 
 public class DSPStatic {
 
+    //======================== PUBLIC INTERFACE
     //obtain mapped control values
     public float lin(int val, float min, float max) {
         float v = ((float)val) / (float)Integer.MAX_VALUE;
