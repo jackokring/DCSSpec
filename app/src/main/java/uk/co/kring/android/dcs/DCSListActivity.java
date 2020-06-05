@@ -107,6 +107,7 @@ public class DCSListActivity extends AppCompatActivity {
     }
 
     public void onShowDSPAction(MenuItem item) {
+        if(!requiresMic()) return;//baulk
         Intent intent = new Intent(DCSListActivity.this,
                 Activity.class);
         startActivity(intent);
@@ -130,6 +131,20 @@ public class DCSListActivity extends AppCompatActivity {
     }
 
     //============================== PACKAGED
+    boolean requiresMic() {
+        if(!permissionToRecordAccepted) {
+            UtilStatic.dialog(this, R.string.mic_title,
+            R.drawable.ic_nomic,
+            getString(R.string.mic),
+            new DialogInterface.OnClickListener() {//ok
+                public void onClick(DialogInterface dialog, int whichButton) {
+                    dialog.dismiss();
+                }
+            }, null, null);
+            return false;
+        } else return true;
+    }
+
     class MyAdapter extends BaseAdapter {
 
         @Override

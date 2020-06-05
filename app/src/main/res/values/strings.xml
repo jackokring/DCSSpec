@@ -34,6 +34,10 @@
     <string name="share_title">Sharing</string>
     <string name="share">Nothing has been processed to share</string>
 
+    <!-- Needs Microphone -->
+    <string name="mic_title">Microphone</string>
+    <string name="mic">This feature needs permission to record which was not granted</string>
+
     <!-- =========================== PREFS -->
     <!-- Preference Titles -->
     <string name="messages_header">Messages</string>
