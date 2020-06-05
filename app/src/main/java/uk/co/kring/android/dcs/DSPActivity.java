@@ -11,6 +11,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.*;
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 public class DSPActivity extends AppCompatActivity {
@@ -58,6 +59,25 @@ public class DSPActivity extends AppCompatActivity {
         super.onDestroy();
     }
 
+    @Override
+    protected void onSaveInstanceState(@NonNull Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putInt("alg", algorithm);
+        for(int i = 0; i < labels.length; ++i) {
+            outState.putIntArray("con" + Integer.toString(i), la.controls[i]);
+        }
+    }
+
+    @Override
+    protected void onRestoreInstanceState(@NonNull Bundle inState) {
+        super.onRestoreInstanceState(inState);
+        algorithm = inState.getInt("alg");
+        for(int i = 0; i < labels.length; ++i) {
+            la.controls[i] = inState.getIntArray("con" + Integer.toString(i));
+        }
+        if(audio != null) audio.setDSPAlg(algorithm, la.controls[algorithm]);
+    }
+
     //=========================== MENU ITEMS
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -76,7 +96,7 @@ public class DSPActivity extends AppCompatActivity {
     public void onShowFilterAction(MenuItem item) {
         algorithm = (algorithm + 1) % labels.length;
         ((ListView)findViewById(R.id.dcs_list)).invalidate();
-        if(audio != null) audio.setDSPAlg(algorithm, la.controls);
+        if(audio != null) audio.setDSPAlg(algorithm, la.controls[algorithm]);
     }
 
     //============================= PACKAGED
@@ -85,12 +105,11 @@ public class DSPActivity extends AppCompatActivity {
         public void makeControls() {
             int m = 0;
             for(int i = 0; i < labels.length; ++i) {
-                if(m < labels[i].length) m = labels[i].length;
+                controls[i] = new int[labels[i].length];
             }
-            controls = new int[m];
         }
 
-        int controls[];
+        int controls[][];
 
         @Override
         public View getView(final int position, View convertView, ViewGroup container) {
@@ -106,7 +125,7 @@ public class DSPActivity extends AppCompatActivity {
             sb.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
                 @Override
                 public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
-                    controls[position] = i;
+                    controls[algorithm][position] = i;
                 }
 
                 @Override
