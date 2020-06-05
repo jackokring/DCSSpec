@@ -140,7 +140,7 @@ public class DCSListActivity extends AppCompatActivity {
                 public void onClick(DialogInterface dialog, int whichButton) {
                     dialog.dismiss();
                 }
-            }, null, null);
+            }, null, getString(R.string.mic_more));
             return false;
         } else return true;
     }

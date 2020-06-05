@@ -45,14 +45,27 @@ public class UtilStatic {
     public static void dialog(Context here, int title, int icon, String text,
                               DialogInterface.OnClickListener ok,
                               DialogInterface.OnClickListener cancel,
-                              DialogInterface.OnClickListener more) {
+                              String more) {
         AlertDialog.Builder builder = new AlertDialog.Builder(here);
         builder.setTitle(here.getString(title));
         builder.setIcon(here.getResources().getDrawable(icon));
         builder.setMessage(text);
         if(ok != null) builder.setPositiveButton(R.string.ok, ok);
         if(cancel != null) builder.setNegativeButton(R.string.cancel, cancel);
-        if(more != null) builder.setNeutralButton(R.string.more, more);
+        if(more != null) builder.setNeutralButton(R.string.more,
+                new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        dialog(here, title, icon, more,
+                            new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialogInterface2, int i) {
+                                    dialogInterface2.dismiss();
+                                }
+                            }, null, null);
+                        dialogInterface.dismiss();
+                    }
+                });
 
         AlertDialog alert = builder.create();
         //alert.getWindow().setType(WindowManager.LayoutParams.TYPE_SYSTEM_ALERT);

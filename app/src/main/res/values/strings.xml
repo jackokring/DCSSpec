@@ -37,6 +37,8 @@
     <!-- Needs Microphone -->
     <string name="mic_title">Microphone</string>
     <string name="mic">This feature needs permission to record which was not granted</string>
+    <string name="mic_more">This permission maybe reset in Settings > Apps > DCS >
+        Permissions > Reset Permissions and restarting the app</string>
 
     <!-- =========================== PREFS -->
     <!-- Preference Titles -->
