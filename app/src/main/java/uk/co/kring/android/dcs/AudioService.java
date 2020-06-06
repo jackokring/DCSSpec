@@ -11,6 +11,7 @@ import android.telephony.TelephonyManager;
 import uk.co.kring.android.dcs.room.AppDatabase;
 import uk.co.kring.android.dcs.statics.CodeStatic;
 import uk.co.kring.android.dcs.statics.DSPStatic;
+import uk.co.kring.android.dcs.statics.UtilStatic;
 
 public class AudioService extends Service {
 
@@ -59,10 +60,6 @@ public class AudioService extends Service {
         //TODO
     }
 
-    public void setGain(int gainMaxScale) {
-        gain = DSPStatic.log(gainMaxScale, 1F, 4F);//8dB?
-    }
-
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         //TODO
@@ -73,7 +70,7 @@ public class AudioService extends Service {
     short inBuff[], outBuff[];
     float fBuff[];
     boolean processed = false;
-    float gain = 1F;
+    float gain;
 
     void readAudio(AudioRecord ar) {
         if(processed) Thread.yield();
@@ -108,6 +105,9 @@ public class AudioService extends Service {
     void getAudioIn() {
         if(audioIn != null) return;
         if(!recordPermission) return;
+        String v = UtilStatic.pref(this, "mic_gain",
+                "0");
+        gain = (float)Math.pow(2F, (float)Integer.valueOf(v));
         AudioRecord ar = new AudioRecord(MediaRecorder.AudioSource.MIC,
                 AudioFormat.SAMPLE_RATE_UNSPECIFIED, AudioFormat.CHANNEL_IN_MONO,
                 AudioFormat.ENCODING_PCM_16BIT,

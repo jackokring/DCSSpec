@@ -99,10 +99,6 @@ public class DSPActivity extends AppCompatActivity {
         if(audio != null) audio.setDSPAlg(algorithm, la.controls[algorithm]);
     }
 
-    public void onShowVolAction(MenuItem item) {
-        //TODO: mic volume etc.
-    }
-
     //============================= PACKAGED
     class MyAdapter extends BaseAdapter {
 
