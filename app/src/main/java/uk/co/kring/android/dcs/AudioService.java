@@ -88,7 +88,6 @@ public class AudioService extends Service {
         } else {
             processDSP = true;
             getAudioIn();
-            getAudioOut();
         }
     }
 
@@ -159,6 +158,7 @@ public class AudioService extends Service {
     void getAudioIn() {//must get before getAudioOut
         if(audioIn != null) return;
         if(!recordPermission) return;
+        stopAudioAll();
         String v = UtilStatic.pref(this, "mic_gain",
                 "0");
         gain = (float)Math.pow(2F, (float)Integer.valueOf(v));
@@ -172,6 +172,7 @@ public class AudioService extends Service {
         for(int i = 0; i < algSet.length; ++i) {
             algSet[i].setRate(sampleRateIn);//set sample rate
         }
+        while(inBuff != null) Thread.yield();
         ar.startRecording();
         isRecording = true;
         inBuff = new short[ar.getBufferSizeInFrames()];//buffer
@@ -185,14 +186,21 @@ public class AudioService extends Service {
         }, "AudioRecorder");
         recordingThread.start();
         audioIn = ar;
+        getAudioOut();
     }
 
+    boolean exitCheck = false;
+
     void getAudioGenerated() {//must getAudioOut first
-        isGenerating = true;
+        stopAudioAll();
+        getAudioOut();
+        while(exitCheck) Thread.yield();
+        exitCheck = isGenerating = true;
         generatingThread = new Thread(new Runnable() {
             public void run() {
                 while(isGenerating)
-                    readGenerated();;
+                    readGenerated();
+                exitCheck = false;
             }
         }, "AudioGenerator");
         generatingThread.start();
@@ -212,7 +220,7 @@ public class AudioService extends Service {
         generatingThread = null;
     }
 
-    void getAudioOut() {
+    void getAudioOut() {//depends on other things so not called directly
         if(audioOut != null) return;
         @Deprecated
         AudioTrack at = new AudioTrack(AudioManager.STREAM_MUSIC,
@@ -223,6 +231,7 @@ public class AudioService extends Service {
                         AudioFormat.ENCODING_PCM_16BIT) * 2,
                 AudioTrack.MODE_STREAM);
         sampleRateOut = at.getSampleRate();
+        while(outBuff != null) Thread.yield();
         if(!isRecording) {//also allows playing only
             fBuff = new float[at.getBufferSizeInFrames()];//alternate
         }
