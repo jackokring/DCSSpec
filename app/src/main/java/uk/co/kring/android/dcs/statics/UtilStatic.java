@@ -86,6 +86,8 @@ public class UtilStatic {
         return b;
     }
 
+    static int msg = 2;
+
     public static void notify(String title, Bundle data,
                               String body, Context here) {
         NotificationManagerCompat nm = NotificationManagerCompat.from(here);
@@ -109,7 +111,7 @@ public class UtilStatic {
                 .setPriority(NotificationCompat.PRIORITY_DEFAULT)
                 .setCategory(NotificationCompat.CATEGORY_MESSAGE)
                 .build();
-        nm.notify(title.hashCode(), builder);
+        nm.notify(msg++, builder);
     }
 
     public static Bitmap getBitmap(Context here, String res) throws IOException {

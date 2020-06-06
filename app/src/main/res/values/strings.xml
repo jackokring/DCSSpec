@@ -2,6 +2,7 @@
     <!-- ================================ APP -->
     <string name="version">1.0.0</string>
     <string name="app_name">DCS</string>
+    <string name="service_notification">Realtime audio service</string>
 
     <!-- ============================= ACTIVITIES -->
     <string name="maps_activity">Location</string>

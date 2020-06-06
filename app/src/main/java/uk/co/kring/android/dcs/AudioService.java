@@ -5,9 +5,14 @@ import android.content.Context;
 import android.content.Intent;
 import android.media.*;
 import android.os.Binder;
+import android.os.Build;
 import android.os.IBinder;
 import android.telephony.PhoneStateListener;
 import android.telephony.TelephonyManager;
+import androidx.annotation.RequiresApi;
+import androidx.core.app.NotificationCompat;
+import androidx.core.app.NotificationManagerCompat;
+import androidx.core.app.TaskStackBuilder;
 import uk.co.kring.android.dcs.room.AppDatabase;
 import uk.co.kring.android.dcs.statics.CodeStatic;
 import uk.co.kring.android.dcs.statics.DSPStatic;
@@ -24,6 +29,7 @@ public class AudioService extends Service {
     int sampleRateIn, sampleRateOut;
     AudioTrack audioOut;
     AudioRecord audioIn;
+    boolean setNotify = true;
 
     //===================== PUBLIC INTERFACE
     public AudioService() {
@@ -32,7 +38,23 @@ public class AudioService extends Service {
 
     @Override
     public IBinder onBind(Intent intent) {
-        //recordPermission = intent.getBooleanExtra("record", false);
+        if(setNotify) {
+            NotificationManagerCompat nm = NotificationManagerCompat.from(this);
+            PendingIntent contentIntent = PendingIntent.getActivity(this,
+                    0, new Intent(this, DCSListActivity.class),
+                    0);
+            Notification builder = new NotificationCompat.Builder(this,
+                    NotificationChannel.DEFAULT_CHANNEL_ID)
+                    .setSmallIcon(R.drawable.ic_filter)
+                    .setContentTitle(getString(R.string.app_name))
+                    .setContentIntent(contentIntent)
+                    .setContentText(getString(R.string.service_notification))
+                    .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+                    .setCategory(NotificationCompat.CATEGORY_MESSAGE)
+                    .build();
+            startForeground(1, builder);
+            setNotify = false;
+        }
         db = AppDatabase.getInstance(getApplicationContext());
         return new MyBinder();
     }
@@ -64,6 +86,13 @@ public class AudioService extends Service {
     public int onStartCommand(Intent intent, int flags, int startId) {
         //TODO
         return super.onStartCommand(intent, flags, startId);
+    }
+
+    @Override
+    public void onDestroy() {
+        stopForeground(true);
+        stopAudioAll();
+        super.onDestroy();
     }
 
     //==================== PACKAGED
