@@ -34,11 +34,11 @@ public class DSPStatic {
                  s^2 + k * s + 1
      */
     //TWO POLE PENTA-VARIANT FILTER
-    public class TwoPole implements DSP {
+    public static class TwoPole implements DSP {
         float fs, f, t, u, k, tf, bl, bb, shelfCentre, lowHi, i;
 
-        public setRate(int rate) {
-            fs = (float)sampleRate;
+        public void setRate(int rate) {
+            fs = (float)rate;
         }
 
         public void setFK(float fc, float ks, float inv, float sc, float lh) {
@@ -78,11 +78,11 @@ public class DSPStatic {
 
     /* 1P H(s) = 1 / (s + fb) */
     //ONE POLE TRI-VARIANT FILTER
-    public class OnePole implements DSP {
+    public static class OnePole implements DSP {
         float fs, f, f2, b, lowHi;
 
-        public setRate(int rate) {
-            fs = (float)sampleRate;
+        public void setRate(int rate) {
+            fs = (float)rate;
         }
 
         public void setFK(float fc, float lh) {//fb feedback not k*s denominator

@@ -12,8 +12,7 @@ import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;;
 import uk.co.kring.android.dcs.room.AppDatabase;
 import uk.co.kring.android.dcs.statics.CodeStatic;
-import uk.co.kring.android.dcs.statics.DSPStatic;
-//import uk.co.kring.android.dcs.statics.DSPStatic.*;
+import uk.co.kring.android.dcs.statics.DSPStatic.*;
 import uk.co.kring.android.dcs.statics.UtilStatic;
 
 public class AudioService extends Service {
@@ -23,11 +22,15 @@ public class AudioService extends Service {
     boolean recordPermission;
     boolean isRecording = false;
     boolean isPlaying = false;
-    Thread recordingThread, playingThread;
+    boolean isGenerating = false;
+    Thread recordingThread, playingThread, generatingThread;
     int sampleRateIn, sampleRateOut;
     AudioTrack audioOut;
     AudioRecord audioIn;
     boolean setNotify = true;
+    boolean processDSP = false;
+    DSP dsp;
+    int[] controls;
 
     //===================== PUBLIC INTERFACE
     public AudioService() {
@@ -68,16 +71,25 @@ public class AudioService extends Service {
     }
 
     public void stopAudioAll() {
+        stopAudioGenerated();
         stopAudioIn();
         stopAudioOut();
     }
 
     public void setDSPAlg(int i, int[] c) {
-        //TODO
+        dsp = algSet[i];
+        controls = c;
     }
 
     public void setMute(boolean m) {
-        //TODO
+        if(m) {
+            stopAudioAll();
+            processDSP = false;
+        } else {
+            processDSP = true;
+            getAudioIn();
+            getAudioOut();
+        }
     }
 
     @Override
@@ -94,12 +106,13 @@ public class AudioService extends Service {
     }
 
     //==================== PACKAGED
-    DSPStatic.DSP[] algSet = {
-            new DSPStatic.TwoPole()
+    DSP[] algSet = {
+            new TwoPole()//filter
     };
 
-    short inBuff[], outBuff[];
-    float fBuff[];
+    short[] inBuff;
+    short[] outBuff;
+    float[] fBuff;
     boolean processed = false;
     float gain;
 
@@ -113,7 +126,16 @@ public class AudioService extends Service {
         for(i = 0; i < inBuff.length; ++i) {
             fBuff[i] = gain * (float)inBuff[i];
         }
-        //TODO: process immediate
+        if(processDSP) {
+            dsp.setParams(controls);//set controls
+            dsp.process(fBuff);//process audio
+        }
+        processed = true;
+    }
+
+    void readGenerated() {
+        if(processed) Thread.yield();
+        //TODO generate new buffer
         processed = true;
     }
 
@@ -123,17 +145,18 @@ public class AudioService extends Service {
         short val;
         for(i = 0; i < fBuff.length; ++i) {
             val = (short)fBuff[i];//clip?
-
+            //TODO
             outBuff[i] = val;
         }
         processed = false;
+        //sample rate?
         while(i < outBuff.length) {
             //error?
             i += at.write(outBuff, i, outBuff.length - i);
         }
     }
 
-    void getAudioIn() {
+    void getAudioIn() {//must get before getAudioOut
         if(audioIn != null) return;
         if(!recordPermission) return;
         String v = UtilStatic.pref(this, "mic_gain",
@@ -146,16 +169,33 @@ public class AudioService extends Service {
                         44100, AudioFormat.CHANNEL_IN_MONO,
                         AudioFormat.ENCODING_PCM_16BIT) * 2);
         sampleRateIn = ar.getSampleRate();
+        for(int i = 0; i < algSet.length; ++i) {
+            algSet[i].setRate(sampleRateIn);//set sample rate
+        }
         ar.startRecording();
         isRecording = true;
+        inBuff = new short[ar.getBufferSizeInFrames()];//buffer
+        fBuff = new float[inBuff.length];
         recordingThread = new Thread(new Runnable() {
             public void run() {
                 while(isRecording)
                     readAudio(ar);
+                inBuff = null;
             }
         }, "AudioRecorder");
         recordingThread.start();
         audioIn = ar;
+    }
+
+    void getAudioGenerated() {//must getAudioOut first
+        isGenerating = true;
+        generatingThread = new Thread(new Runnable() {
+            public void run() {
+                while(isGenerating)
+                    readGenerated();;
+            }
+        }, "AudioGenerator");
+        generatingThread.start();
     }
 
     void stopAudioIn() {
@@ -165,6 +205,11 @@ public class AudioService extends Service {
             audioIn.release();
             recordingThread = null;
         }
+    }
+
+    void stopAudioGenerated() {
+        isGenerating = false;
+        generatingThread = null;
     }
 
     void getAudioOut() {
@@ -178,11 +223,17 @@ public class AudioService extends Service {
                         AudioFormat.ENCODING_PCM_16BIT) * 2,
                 AudioTrack.MODE_STREAM);
         sampleRateOut = at.getSampleRate();
+        if(!isRecording) {//also allows playing only
+            fBuff = new float[at.getBufferSizeInFrames()];//alternate
+        }
+        outBuff = new short[fBuff.length];//an easy if sample rate equal
         isPlaying = true;
         playingThread = new Thread(new Runnable() {
             public void run() {
                 while(isPlaying)
                     writeAudio(at);
+                fBuff = null;
+                outBuff = null;
             }
         }, "AudioPlayer");
         playingThread.start();
