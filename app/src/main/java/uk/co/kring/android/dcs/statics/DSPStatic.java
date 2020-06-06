@@ -25,6 +25,7 @@ public class DSPStatic {
     public interface DSP {
         void process(float[] samples);
         void setParams(int[] maxScaled);
+        void setRate(int rate);
     }
 
     /* 2P
@@ -36,8 +37,8 @@ public class DSPStatic {
     public class TwoPole implements DSP {
         float fs, f, t, u, k, tf, bl, bb, shelfCentre, lowHi, i;
 
-        public TwoPole(float sampleRate) {
-            fs = sampleRate;
+        public setRate(int rate) {
+            fs = (float)sampleRate;
         }
 
         public void setFK(float fc, float ks, float inv, float sc, float lh) {
@@ -80,8 +81,8 @@ public class DSPStatic {
     public class OnePole implements DSP {
         float fs, f, f2, b, lowHi;
 
-        public OnePole(float sampleRate) {
-            fs = sampleRate;
+        public setRate(int rate) {
+            fs = (float)sampleRate;
         }
 
         public void setFK(float fc, float lh) {//fb feedback not k*s denominator

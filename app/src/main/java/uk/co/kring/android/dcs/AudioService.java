@@ -5,17 +5,15 @@ import android.content.Context;
 import android.content.Intent;
 import android.media.*;
 import android.os.Binder;
-import android.os.Build;
 import android.os.IBinder;
 import android.telephony.PhoneStateListener;
 import android.telephony.TelephonyManager;
-import androidx.annotation.RequiresApi;
 import androidx.core.app.NotificationCompat;
-import androidx.core.app.NotificationManagerCompat;
-import androidx.core.app.TaskStackBuilder;
+import androidx.core.app.NotificationManagerCompat;;
 import uk.co.kring.android.dcs.room.AppDatabase;
 import uk.co.kring.android.dcs.statics.CodeStatic;
 import uk.co.kring.android.dcs.statics.DSPStatic;
+//import uk.co.kring.android.dcs.statics.DSPStatic.*;
 import uk.co.kring.android.dcs.statics.UtilStatic;
 
 public class AudioService extends Service {
@@ -96,6 +94,10 @@ public class AudioService extends Service {
     }
 
     //==================== PACKAGED
+    DSPStatic.DSP[] algSet = {
+            new DSPStatic.TwoPole()
+    };
+
     short inBuff[], outBuff[];
     float fBuff[];
     boolean processed = false;
