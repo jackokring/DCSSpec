@@ -1,10 +1,8 @@
 package uk.co.kring.android.dcs;
 
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
-import android.os.Environment;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.webkit.MimeTypeMap;
@@ -15,6 +13,7 @@ import uk.co.kring.android.dcs.statics.UtilStatic;
 
 import java.io.*;
 import java.util.UUID;
+import java.util.concurrent.LinkedBlockingQueue;
 
 import static java.security.AccessController.getContext;
 
@@ -53,8 +52,9 @@ public class ShareActivity extends AppCompatActivity {
         }
     }
 
+    static LinkedBlockingQueue<Thread> lock = new LinkedBlockingQueue<Thread>();
+
     public class FileProcessor<K> {
-        boolean lock = false;
         K use;
 
         public FileProcessor<K> setExtra(K k) {
@@ -75,18 +75,24 @@ public class ShareActivity extends AppCompatActivity {
             Thread background = new Thread() {
                 public void run() {
                     try {
-                        while (lock) Thread.yield();
-                        lock = true;
+                        lock.put(this);
+                        while (lock.peek() != this) Thread.yield();
                         headers(is, os, oldName);//anything simple before - headers?
                         background(is, os);
                         os.flush();
                         os.close();
-                        lock = false;
                         is.close();
+                        lock.take();
                     } catch (Exception e) {
                         //error();
                         runOnUiThread(onError);//thread safe
-                        lock = false;
+                        while(lock.peek() != null) {
+                            try {
+                                lock.take().interrupt();
+                            } catch(Exception f) {
+                                //fine as expected
+                            }
+                        }
                     }
                 }
             };
