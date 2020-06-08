@@ -41,7 +41,7 @@ public class ShareActivity extends AppCompatActivity {
                     String ext = MimeTypeMap.getSingleton().getExtensionFromMimeType(type);
                     handleFile(i = getContentResolver().openInputStream(current),
                             ext, new FileProcessor());
-                    i.close();
+                    //i.close();
                 } catch(Exception e) {
                     error();
                     finish();
@@ -50,6 +50,60 @@ public class ShareActivity extends AppCompatActivity {
                 error();
                 finish();//no file
             }
+        }
+    }
+
+    public class FileProcessor<K> {
+        boolean lock = false;
+        K use;
+
+        public FileProcessor<K> setExtra(K k) {
+            use = k;
+            return this;
+        }
+
+        public K getExtra() {
+            return use;
+        }
+
+        public void process(InputStream is, OutputStream os, String oldName) {
+            Thread onError = new Thread() {
+                public void run() {
+                    error();
+                }
+            };
+            Thread background = new Thread() {
+                public void run() {
+                    try {
+                        while (lock) Thread.yield();
+                        lock = true;
+                        headers(is, os, oldName);//anything simple before - headers?
+                        background(is, os);
+                        os.flush();
+                        os.close();
+                        lock = false;
+                        is.close();
+                    } catch (Exception e) {
+                        //error();
+                        runOnUiThread(onError);//thread safe
+                        lock = false;
+                    }
+                }
+            };
+            background.start();
+        }
+
+        public void background(InputStream is, OutputStream os)
+                throws IOException {
+            int i;
+            while((i = is.read()) != -1) {
+                os.write(i);//copy
+            }
+        }
+
+        public void headers(InputStream is, OutputStream os, String oldName)
+            /* throws IOException */ {
+
         }
     }
 
@@ -97,8 +151,8 @@ public class ShareActivity extends AppCompatActivity {
         try {
             OutputStream os = new FileOutputStream(newFile);
             fp.process(in, os, old);//use old name as useful maybe
-            os.flush();
-            os.close();
+            //os.flush();
+            //os.close();
         } catch(Exception e) {
             error();
         }
@@ -133,16 +187,6 @@ public class ShareActivity extends AppCompatActivity {
             }
         } catch(Exception e) {
             error();
-        }
-    }
-
-    class FileProcessor {
-        public void process(InputStream is, OutputStream os, String oldName)
-                throws IOException {
-            int i;
-            while((i = is.read()) != -1) {
-                os.write(i);//copy
-            }
         }
     }
 }

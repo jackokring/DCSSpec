@@ -138,12 +138,15 @@ public class AudioService extends Service {
         processed = true;
     }
 
+    float res = 0F;
+
     void writeAudio(AudioTrack at) {
         if(!processed) Thread.yield();
         int i = 0;
         short val;
         for(i = 0; i < fBuff.length; ++i) {
-            val = (short)fBuff[i];//clip?
+            val = (short)(fBuff[i] - res);//anti-phase noise and clip?
+            res = fBuff[i] - val;
             //TODO
             outBuff[i] = val;
         }
@@ -256,6 +259,7 @@ public class AudioService extends Service {
             audioOut.stop();
             audioOut.release();
             playingThread = null;
+            res = 0F;
         }
     }
 
