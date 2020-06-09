@@ -76,9 +76,10 @@ public class AudioService extends Service {
         stopAudioOut();
     }
 
-    public void setDSPAlg(int i, int[] c) {
+    public synchronized void setDSPAlg(int i, int[] c) {
         dsp = algSet[i];
         controls = c;
+        setMute(false);
     }
 
     public void setMute(boolean m) {
@@ -86,7 +87,7 @@ public class AudioService extends Service {
             stopAudioAll();
             processDSP = false;
         } else {
-            processDSP = true;
+            if(controls != null) processDSP = true;
             getAudioIn();
         }
     }
@@ -125,7 +126,7 @@ public class AudioService extends Service {
         for(i = 0; i < inBuff.length; ++i) {
             fBuff[i] = gain * (float)inBuff[i];
         }
-        if(processDSP) {
+        if(processDSP) synchronized(this) {
             dsp.setParams(controls);//set controls
             dsp.process(fBuff);//process audio
         }

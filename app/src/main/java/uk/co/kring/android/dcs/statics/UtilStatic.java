@@ -27,9 +27,9 @@ import com.google.firebase.remoteconfig.FirebaseRemoteConfigSettings;
 import uk.co.kring.android.dcs.ActivityException;
 import uk.co.kring.android.dcs.MessageActivity;
 import uk.co.kring.android.dcs.R;
-
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.Iterator;
 import java.util.Map;
 
@@ -166,22 +166,6 @@ public class UtilStatic {
         }
     }
 
-    static void fetchRemoteConfig(Activity here) {
-        FirebaseRemoteConfig rc = FirebaseRemoteConfig.getInstance();
-        FirebaseRemoteConfigSettings configSettings =
-            new FirebaseRemoteConfigSettings.Builder()
-            .setMinimumFetchIntervalInSeconds(3600 * 24)
-            .build();
-        rc.setConfigSettingsAsync(configSettings);
-        rc.fetchAndActivate()
-            .addOnCompleteListener(here, new OnCompleteListener<Boolean>() {
-                @Override
-                public void onComplete(Task<Boolean> task) {
-                    config = rc;
-                }
-            });
-    }
-
     public static String pref(Context c, String key, String unset) {
         SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(c);
         String chan9;
@@ -202,11 +186,6 @@ public class UtilStatic {
         }
     }
 
-    static String getPrefRemote(String key, String unset) {
-        if(config != null) return config.getString(key);
-        return unset;
-    }
-
     public static void postAnalytic(Context c, Bundle b) {
         if(analytics == null) {
             if(c == null) throw new ActivityException(new Exception());
@@ -221,5 +200,48 @@ public class UtilStatic {
 
     public static void postAnalyticBundle(Bundle b) {
         postAnalytic(null, b);
+    }
+
+    public static String loadLatin(InputStream is) throws IOException {
+        StringBuffer in = new StringBuffer();
+        int i;
+        while((i = is.read()) != -1) {
+            in.append((char)i);
+        }
+        is.close();
+        return in.toString();
+    }
+
+    public static String loadUTF(InputStream is) throws IOException {
+        StringBuffer in = new StringBuffer();
+        InputStreamReader isr = new InputStreamReader(is, "UTF8");
+        int i;
+        while((i = isr.read()) != -1) {
+            in.append((char)i);
+        }
+        isr.close();
+        return in.toString();
+    }
+
+    //================================= PACKAGED
+    static String getPrefRemote(String key, String unset) {
+        if(config != null) return config.getString(key);
+        return unset;
+    }
+
+    static void fetchRemoteConfig(Activity here) {
+        FirebaseRemoteConfig rc = FirebaseRemoteConfig.getInstance();
+        FirebaseRemoteConfigSettings configSettings =
+                new FirebaseRemoteConfigSettings.Builder()
+                        .setMinimumFetchIntervalInSeconds(3600 * 24)
+                        .build();
+        rc.setConfigSettingsAsync(configSettings);
+        rc.fetchAndActivate()
+                .addOnCompleteListener(here, new OnCompleteListener<Boolean>() {
+                    @Override
+                    public void onComplete(Task<Boolean> task) {
+                        config = rc;
+                    }
+                });
     }
 }

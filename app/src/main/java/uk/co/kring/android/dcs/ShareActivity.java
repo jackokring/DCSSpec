@@ -54,16 +54,10 @@ public class ShareActivity extends AppCompatActivity {
 
     static LinkedBlockingQueue<Thread> lock = new LinkedBlockingQueue<Thread>();
 
-    public class FileProcessor<K> {
-        K use;
+    public class FileProcessor {
 
-        public FileProcessor<K> setExtra(K k) {
-            use = k;
-            return this;
-        }
-
-        public K getExtra() {
-            return use;
+        public String newName(String oldName, String ext) {
+            return UUID.randomUUID().toString() + ext;
         }
 
         public void process(InputStream is, OutputStream os, String oldName) {
@@ -151,7 +145,7 @@ public class ShareActivity extends AppCompatActivity {
 
     void handleFile(InputStream in, String ext, FileProcessor fp) {
         String old = processedName;
-        processedName = UUID.randomUUID().toString() + ext;
+        processedName = fp.newName(old, ext);
         File path = new File(getExternalFilesDir(null), "processed");
         File newFile = new File(path, processedName);
         try {
