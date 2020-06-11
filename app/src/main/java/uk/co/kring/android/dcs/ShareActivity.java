@@ -97,6 +97,10 @@ public class ShareActivity extends AppCompatActivity {
             error();
             return;
         }
+        if(lock.peek() != null) {
+            waitFor();
+            return;
+        }
         File path = new File(getExternalFilesDir(null), "processed");
         File newFile = new File(path, processedName);
         Uri contentUri = FileProvider.getUriForFile(this,
@@ -114,6 +118,17 @@ public class ShareActivity extends AppCompatActivity {
         UtilStatic.dialog(this, R.string.share_title,
                 R.drawable.ic_share,
                 getString(R.string.share),
+                new DialogInterface.OnClickListener() {//ok
+                    public void onClick(DialogInterface dialog, int whichButton) {
+                        dialog.dismiss();
+                    }
+                }, null, null);
+    }
+
+    void waitFor() {
+        UtilStatic.dialog(this, R.string.share_title,
+                R.drawable.ic_share,
+                getString(R.string.share_wait),
                 new DialogInterface.OnClickListener() {//ok
                     public void onClick(DialogInterface dialog, int whichButton) {
                         dialog.dismiss();

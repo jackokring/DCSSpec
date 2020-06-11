@@ -34,6 +34,7 @@
     <!-- Share -->
     <string name="share_title">Sharing</string>
     <string name="share">Nothing has been processed to share</string>
+    <string name="share_wait">Processing to share so try later</string>
 
     <!-- Needs Microphone -->
     <string name="mic_title">Microphone</string>
