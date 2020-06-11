@@ -136,6 +136,7 @@ public class UtilStatic {
 
     public static Bitmap[] getChars() {
         Bitmap[] arr = new Bitmap[f.getWidth() / width * f.getHeight() / height];
+        //TODO: 1200 -> 1024 and 26 plus 30 (@ 20 * 20)
         for(char i = 0; i < arr.length; ++i) {
             arr[i] = getCharBitmap(i);
         }
