@@ -9,13 +9,11 @@ import android.webkit.MimeTypeMap;
 import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
 import androidx.core.content.FileProvider;
+import uk.co.kring.android.dcs.mvm.FileProcessor;
 import uk.co.kring.android.dcs.statics.UtilStatic;
 
 import java.io.*;
-import java.util.UUID;
 import java.util.concurrent.LinkedBlockingQueue;
-
-import static java.security.AccessController.getContext;
 
 public class ShareActivity extends AppCompatActivity {
 
@@ -54,57 +52,37 @@ public class ShareActivity extends AppCompatActivity {
 
     static LinkedBlockingQueue<Thread> lock = new LinkedBlockingQueue<Thread>();
 
-    public class FileProcessor {
-
-        public String newName(String oldName, String ext) {
-            return UUID.randomUUID().toString() + ext;
-        }
-
-        public void process(InputStream is, OutputStream os, String oldName) {
-            Thread onError = new Thread() {
-                public void run() {
-                    error();
-                }
-            };
-            Thread background = new Thread() {
-                public void run() {
-                    try {
-                        lock.put(this);
-                        while (lock.peek() != this) Thread.yield();
-                        headers(is, os, oldName);//anything simple before - headers?
-                        background(is, os);
-                        os.flush();
-                        os.close();
-                        is.close();
-                        lock.take();
-                    } catch (Exception e) {
-                        //error();
-                        runOnUiThread(onError);//thread safe
-                        while(lock.peek() != null) {
-                            try {
-                                lock.take().interrupt();
-                            } catch(Exception f) {
-                                //fine as expected
-                            }
+    public void process(InputStream is, OutputStream os, String oldName, FileProcessor fp) {
+        Thread onError = new Thread() {
+            public void run() {
+                error();
+            }
+        };
+        Thread background = new Thread() {
+            public void run() {
+                try {
+                    lock.put(this);
+                    while (lock.peek() != this) Thread.yield();
+                    fp.headers(is, os, oldName);//anything simple before - headers?
+                    fp.background(is, os);
+                    os.flush();
+                    os.close();
+                    is.close();
+                    lock.take();
+                } catch (Exception e) {
+                    //error();
+                    runOnUiThread(onError);//thread safe
+                    while(lock.peek() != null) {
+                        try {
+                            lock.take().interrupt();
+                        } catch(Exception f) {
+                            //fine as expected
                         }
                     }
                 }
-            };
-            background.start();
-        }
-
-        public void background(InputStream is, OutputStream os)
-                throws IOException {
-            int i;
-            while((i = is.read()) != -1) {
-                os.write(i);//copy
             }
-        }
-
-        public void headers(InputStream is, OutputStream os, String oldName)
-            /* throws IOException */ {
-
-        }
+        };
+        background.start();
     }
 
     //================================ MENU ITEMS
@@ -150,7 +128,7 @@ public class ShareActivity extends AppCompatActivity {
         File newFile = new File(path, processedName);
         try {
             OutputStream os = new FileOutputStream(newFile);
-            fp.process(in, os, old);//use old name as useful maybe
+            process(in, os, old, fp);//use old name as useful maybe
             //os.flush();
             //os.close();
         } catch(Exception e) {
