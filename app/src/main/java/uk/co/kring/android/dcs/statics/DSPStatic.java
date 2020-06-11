@@ -17,8 +17,8 @@ public class DSPStatic {
         return (float)Math.pow(2F, v) * centre;
     }
 
-    public static float qk(int val, float min, float max) {
-        float v = lin(val, 1F / min, 1F / max);
+    public static float qk(int val, float octaves) {
+        float v = log(val, 1F, -octaves);
         return 1 / v;//return k from Q
     }
 
@@ -43,10 +43,10 @@ public class DSPStatic {
 
         public void setFK(float fc, float ks, float inv, float sc, float lh) {
             f   = (float)Math.tan(PI * fc / fs);
+            k = ks;
             t   = 1 / (1 + k * f);
             u   = 1 / (1 + t * f * f);
             tf  = t * f;
-            k = ks;
             shelfCentre = sc;
             i = inv;
             lowHi = lh;
@@ -54,7 +54,7 @@ public class DSPStatic {
 
         public void setParams(int[] maxScaled) {
             setFK(log(maxScaled[0], 500F, 4F),
-                    qk(maxScaled[1], 0F, 10F),
+                    qk(maxScaled[1], 4F),
                     lin(maxScaled[2], 0F, 1F),
                     lin(maxScaled[3], 0F, 1F),
                     lin(maxScaled[4], 0F, 1F));
