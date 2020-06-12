@@ -31,6 +31,19 @@
     </PreferenceCategory>
 
     <PreferenceCategory
+            app:title="@string/mic_header">
+
+        <ListPreference
+                app:key="joystick"
+                app:title="@string/joystick_header"
+                app:entries="@array/joystick_entries"
+                app:entryValues="@array/joystick_values"
+                app:defaultValue="1"
+                app:useSimpleSummaryProvider="true"/>
+
+    </PreferenceCategory>
+
+    <PreferenceCategory
             app:title="@string/sync_header">
 
         <SwitchPreferenceCompat

@@ -260,67 +260,24 @@ public class UtilStatic {
     public final static String SLEFT     = "LEFT";
     public final static String SRIGHT    = "RIGHT";
 
-    public final static String SBACK     = "B-Cross";
-    public final static String SACTION   = "A-Circle";
-    public final static String SSCAN     = "X-Triangle";
-    public final static String SINFO     = "Y-Square";
-    public final static String SPAUSE    = "START";
-    public final static String SMENU     = "SELECT";
+    public final static String SBACK     = "B-Cross-AltGr";
+    public final static String SACTION   = "A-Circle-Space";
+    public final static String SSCAN     = "X-Triangle-ShiftRight";
+    public final static String SINFO     = "Y-Square-/";
+    public final static String SPAUSE    = "START-Enter";
+    public final static String SMENU     = "SELECT-Esc";
 
-    public final static String SL1       = "LEFT TRIGGER";
-    public final static String SR1       = "RIGHT TRIGGER";
+    public final static String SL1       = "L1-,";
+    public final static String SR1       = "R1-.";
 
     static int directionPressed = -1; // initialized to -1
 
-    public static void initCheapGenericHID1() {//SNES USB
-        A        = KeyEvent.KEYCODE_BUTTON_4;//primary
-        B        = KeyEvent.KEYCODE_BUTTON_3;//exit/back
-        X        = KeyEvent.KEYCODE_BUTTON_2;
-        Y        = KeyEvent.KEYCODE_BUTTON_1;
-        L1       = KeyEvent.KEYCODE_BUTTON_5;
-        R1       = KeyEvent.KEYCODE_BUTTON_6;
-        L2       = KeyEvent.KEYCODE_BUTTON_5;//duplicate
-        R2       = KeyEvent.KEYCODE_BUTTON_6;
-
-        //special action buttons (for menus and pause)
-        PAUSE    = KeyEvent.KEYCODE_BUTTON_8;
-        MENU     = KeyEvent.KEYCODE_BUTTON_7;//not all controllers?
-        //NB. paused and ACTION is MENU?
-        fixButtons();
-    }
-
-    public static void initCheapGenericHID2() {//PS1 USB / Logitech USB
-        A        = KeyEvent.KEYCODE_BUTTON_3;//primary
-        B        = KeyEvent.KEYCODE_BUTTON_2;//exit/back
-        X        = KeyEvent.KEYCODE_BUTTON_4;
-        Y        = KeyEvent.KEYCODE_BUTTON_1;
-        L1       = KeyEvent.KEYCODE_BUTTON_5;
-        R1       = KeyEvent.KEYCODE_BUTTON_6;
-        L2       = KeyEvent.KEYCODE_BUTTON_7;
-        R2       = KeyEvent.KEYCODE_BUTTON_8;
-
-        //special action buttons (for menus and pause)
-        PAUSE    = KeyEvent.KEYCODE_BUTTON_10;
-        MENU     = KeyEvent.KEYCODE_BUTTON_9;//not all controllers?
-        //NB. paused and ACTION is MENU?
-        fixButtons();
-    }
-
-    public static void initCheapGenericHID3() {//PS with adapter generic USB
-        A        = KeyEvent.KEYCODE_BUTTON_2;//primary
-        B        = KeyEvent.KEYCODE_BUTTON_3;//exit/back
-        X        = KeyEvent.KEYCODE_BUTTON_1;
-        Y        = KeyEvent.KEYCODE_BUTTON_4;
-        L1       = KeyEvent.KEYCODE_BUTTON_7;
-        R1       = KeyEvent.KEYCODE_BUTTON_8;
-        L2       = KeyEvent.KEYCODE_BUTTON_5;
-        R2       = KeyEvent.KEYCODE_BUTTON_6;
-
-        //special action buttons (for menus and pause)
-        PAUSE    = KeyEvent.KEYCODE_BUTTON_10;
-        MENU     = KeyEvent.KEYCODE_BUTTON_9;//not all controllers?
-        //NB. paused and ACTION is MENU?
-        fixButtons();
+    public void configJoystick(Context c) {
+        String j = pref(c, "joystick", "1");
+        if(j.compareTo("1") == 0) initCheapGenericHID1();
+        if(j.compareTo("2") == 0) initCheapGenericHID2();
+        if(j.compareTo("3") == 0) initCheapGenericHID3();
+        if(j.compareTo("4") == 0) initCheapGenericHID4();
     }
 
     public static int getDirectionPressed(InputEvent event) {
@@ -374,6 +331,14 @@ public class UtilStatic {
         KeyEvent k = (KeyEvent)event;
         if(k.getRepeatCount() == 0) {
             int c = k.getKeyCode();
+            if(c == KeyEvent.KEYCODE_ENTER) c = PAUSE;
+            if(c == KeyEvent.KEYCODE_SPACE) c = A;
+            if(c == KeyEvent.KEYCODE_ALT_RIGHT) c = B;
+            if(c == KeyEvent.KEYCODE_SHIFT_RIGHT) c = X;
+            if(c == KeyEvent.KEYCODE_SLASH) c = Y;
+            if(c == KeyEvent.KEYCODE_ESCAPE) c = MENU;
+            if(c == KeyEvent.KEYCODE_COMMA) c = L1;
+            if(c == KeyEvent.KEYCODE_PERIOD) c = R1;
             if(c == CENTER) c = A;//primary action android suggestion
             if(c == KeyEvent.KEYCODE_MENU) c = MENU;//map suggestion
             if(c == L2) c = L1;//map suggestion
@@ -452,6 +417,74 @@ public class UtilStatic {
     }
 
     //================================= PACKAGED
+    static void initCheapGenericHID1() {//SNES USB
+        A        = KeyEvent.KEYCODE_BUTTON_4;//primary
+        B        = KeyEvent.KEYCODE_BUTTON_3;//exit/back
+        X        = KeyEvent.KEYCODE_BUTTON_2;
+        Y        = KeyEvent.KEYCODE_BUTTON_1;
+        L1       = KeyEvent.KEYCODE_BUTTON_5;
+        R1       = KeyEvent.KEYCODE_BUTTON_6;
+        L2       = KeyEvent.KEYCODE_BUTTON_5;//duplicate
+        R2       = KeyEvent.KEYCODE_BUTTON_6;
+
+        //special action buttons (for menus and pause)
+        PAUSE    = KeyEvent.KEYCODE_BUTTON_8;
+        MENU     = KeyEvent.KEYCODE_BUTTON_7;//not all controllers?
+        //NB. paused and ACTION is MENU?
+        fixButtons();
+    }
+
+    static void initCheapGenericHID2() {//PS1 USB / Logitech USB
+        A        = KeyEvent.KEYCODE_BUTTON_3;//primary
+        B        = KeyEvent.KEYCODE_BUTTON_2;//exit/back
+        X        = KeyEvent.KEYCODE_BUTTON_4;
+        Y        = KeyEvent.KEYCODE_BUTTON_1;
+        L1       = KeyEvent.KEYCODE_BUTTON_5;
+        R1       = KeyEvent.KEYCODE_BUTTON_6;
+        L2       = KeyEvent.KEYCODE_BUTTON_7;
+        R2       = KeyEvent.KEYCODE_BUTTON_8;
+
+        //special action buttons (for menus and pause)
+        PAUSE    = KeyEvent.KEYCODE_BUTTON_10;
+        MENU     = KeyEvent.KEYCODE_BUTTON_9;//not all controllers?
+        //NB. paused and ACTION is MENU?
+        fixButtons();
+    }
+
+    static void initCheapGenericHID3() {//PS with adapter generic USB
+        A        = KeyEvent.KEYCODE_BUTTON_2;//primary
+        B        = KeyEvent.KEYCODE_BUTTON_3;//exit/back
+        X        = KeyEvent.KEYCODE_BUTTON_1;
+        Y        = KeyEvent.KEYCODE_BUTTON_4;
+        L1       = KeyEvent.KEYCODE_BUTTON_7;
+        R1       = KeyEvent.KEYCODE_BUTTON_8;
+        L2       = KeyEvent.KEYCODE_BUTTON_5;
+        R2       = KeyEvent.KEYCODE_BUTTON_6;
+
+        //special action buttons (for menus and pause)
+        PAUSE    = KeyEvent.KEYCODE_BUTTON_10;
+        MENU     = KeyEvent.KEYCODE_BUTTON_9;//not all controllers?
+        //NB. paused and ACTION is MENU?
+        fixButtons();
+    }
+
+    static void initCheapGenericHID4() {//NES USB
+        A        = KeyEvent.KEYCODE_BUTTON_2;//primary
+        B        = KeyEvent.KEYCODE_BUTTON_1;//exit/back
+        X        = KeyEvent.KEYCODE_BUTTON_3;
+        Y        = KeyEvent.KEYCODE_BUTTON_4;
+        L1       = KeyEvent.KEYCODE_BUTTON_5;//invalid TODO:
+        R1       = KeyEvent.KEYCODE_BUTTON_6;
+        L2       = KeyEvent.KEYCODE_BUTTON_5;
+        R2       = KeyEvent.KEYCODE_BUTTON_6;
+
+        //special action buttons (for menus and pause)
+        PAUSE    = KeyEvent.KEYCODE_BUTTON_7;
+        MENU     = KeyEvent.KEYCODE_BUTTON_8;//not all controllers?
+        //NB. paused and ACTION is MENU?
+        fixButtons();
+    }
+
     static void fixButtons() {
         BACK     = B;//easy check back
         ACTION   = A;

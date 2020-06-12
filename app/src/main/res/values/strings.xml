@@ -45,6 +45,7 @@
     <!-- =========================== PREFS -->
     <!-- Preference Titles -->
     <string name="mic_header">Audio</string>
+    <string name="joystick_header">Joystick</string>
 
     <string name="sync_header">Sync</string>
 
