@@ -229,28 +229,52 @@ public class UtilStatic {
     }
 
     //directions
-    final static int UP       = KeyEvent.KEYCODE_DPAD_UP;
-    final static int LEFT     = KeyEvent.KEYCODE_DPAD_LEFT;
-    final static int RIGHT    = KeyEvent.KEYCODE_DPAD_RIGHT;
-    final static int DOWN     = KeyEvent.KEYCODE_DPAD_DOWN;
-    final static int CENTER   = KeyEvent.KEYCODE_DPAD_CENTER;
+    public final static int UP       = KeyEvent.KEYCODE_DPAD_UP;
+    public final static int LEFT     = KeyEvent.KEYCODE_DPAD_LEFT;
+    public final static int RIGHT    = KeyEvent.KEYCODE_DPAD_RIGHT;
+    public final static int DOWN     = KeyEvent.KEYCODE_DPAD_DOWN;
+    public final static int CENTER   = KeyEvent.KEYCODE_DPAD_CENTER;
 
     //action buttons
-    final static int A        = KeyEvent.KEYCODE_BUTTON_A;//primary
-    final static int B        = KeyEvent.KEYCODE_BUTTON_B;//exit/back
-    final static int X        = KeyEvent.KEYCODE_BUTTON_X;
-    final static int Y        = KeyEvent.KEYCODE_BUTTON_Y;
-    final static int LT       = KeyEvent.KEYCODE_BUTTON_L1;
-    final static int RT       = KeyEvent.KEYCODE_BUTTON_R1;
+    public static int A        = KeyEvent.KEYCODE_BUTTON_A;//primary
+    public static int B        = KeyEvent.KEYCODE_BUTTON_B;//exit/back
+    public static int X        = KeyEvent.KEYCODE_BUTTON_X;
+    public static int Y        = KeyEvent.KEYCODE_BUTTON_Y;
+    public static int L1       = KeyEvent.KEYCODE_BUTTON_L1;
+    public static int R1       = KeyEvent.KEYCODE_BUTTON_R1;
+    static int L2              = KeyEvent.KEYCODE_BUTTON_L2;
+    static int R2              = KeyEvent.KEYCODE_BUTTON_R2;
 
     //special action buttons (for menus and pause)
-    final static int PAUSE    = KeyEvent.KEYCODE_BUTTON_START;
-    final static int MENU     = KeyEvent.KEYCODE_BUTTON_SELECT;//not all controllers?
+    public static int PAUSE    = KeyEvent.KEYCODE_BUTTON_START;
+    public static int MENU     = KeyEvent.KEYCODE_BUTTON_SELECT;//not all controllers?
     //NB. paused and ACTION is MENU?
-    final static int BACK     = KeyEvent.KEYCODE_BUTTON_B;//easy check back
-    final static int ACTION   = KeyEvent.KEYCODE_BUTTON_A;
+    public static int BACK     = B;//back (shield)
+    public static int ACTION   = A;//order (attack/fire)
+    public static int SCAN     = X;//warning (hazard/seek)
+    public static int INFO     = Y;//information (status)
 
     static int directionPressed = -1; // initialized to -1
+
+    public static void initCheapGenericHID() {
+        A        = KeyEvent.KEYCODE_BUTTON_4;//primary
+        B        = KeyEvent.KEYCODE_BUTTON_3;//exit/back
+        X        = KeyEvent.KEYCODE_BUTTON_2;
+        Y        = KeyEvent.KEYCODE_BUTTON_1;
+        L1       = KeyEvent.KEYCODE_BUTTON_5;
+        R1       = KeyEvent.KEYCODE_BUTTON_6;
+        L2       = KeyEvent.KEYCODE_BUTTON_5;//duplicate
+        R2       = KeyEvent.KEYCODE_BUTTON_6;
+
+        //special action buttons (for menus and pause)
+        PAUSE    = KeyEvent.KEYCODE_BUTTON_8;
+        MENU     = KeyEvent.KEYCODE_BUTTON_7;//not all controllers?
+        //NB. paused and ACTION is MENU?
+        BACK     = B;//easy check back
+        ACTION   = A;
+        SCAN     = X;
+        INFO     = Y;
+    }
 
     public static int getDirectionPressed(InputEvent event) {
         if (!isDpadDevice(event)) {
@@ -299,17 +323,31 @@ public class UtilStatic {
         return directionPressed;
     }
 
-    public static boolean isKey(InputEvent event, int keyCode, boolean paused) {
+    static KeyEvent lastButton = null;
+
+    public static boolean isButton(InputEvent event, int keyCode, boolean paused) {
         if (event instanceof KeyEvent) {
             KeyEvent k = (KeyEvent)event;
             if(k.getRepeatCount() == 0) {
                 int c = k.getKeyCode();
                 if(c == CENTER) c = A;//primary action android suggestion
                 if(c == KeyEvent.KEYCODE_MENU) c = MENU;//map suggestion
-                if(c == KeyEvent.KEYCODE_BUTTON_L2) c = LT;//map suggestion
-                if(c == KeyEvent.KEYCODE_BUTTON_R2) c = RT;//map suggestion
+                if(c == L2) c = L1;//map suggestion
+                if(c == R2) c = R1;//map suggestion
                 if(paused && c == A) c = MENU;//if no SELECT button?
-                if(c == keyCode) return true;
+                if(c == INFO) {
+                    if(lastButton != k) {
+                        if (lastButton != null && keyCode == PAUSE) {
+                            c = PAUSE;//a pause mechanism
+                        }
+                        lastButton = k;//new event
+                    }
+                } else {
+                    lastButton = null;
+                }
+                if(c == keyCode)  {
+                    return true;
+                }
             }
         }
         return false;
