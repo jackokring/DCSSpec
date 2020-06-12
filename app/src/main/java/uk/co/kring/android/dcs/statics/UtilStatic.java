@@ -10,6 +10,10 @@ import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Rect;
 import android.os.Bundle;
+import android.view.InputDevice;
+import android.view.InputEvent;
+import android.view.KeyEvent;
+import android.view.MotionEvent;
 import android.widget.Toast;
 import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
@@ -224,7 +228,173 @@ public class UtilStatic {
         return in.toString();
     }
 
+    //directions
+    final static int UP       = KeyEvent.KEYCODE_DPAD_UP;
+    final static int LEFT     = KeyEvent.KEYCODE_DPAD_LEFT;
+    final static int RIGHT    = KeyEvent.KEYCODE_DPAD_RIGHT;
+    final static int DOWN     = KeyEvent.KEYCODE_DPAD_DOWN;
+    final static int CENTER   = KeyEvent.KEYCODE_DPAD_CENTER;
+
+    //action buttons
+    final static int A        = KeyEvent.KEYCODE_BUTTON_A;//primary
+    final static int B        = KeyEvent.KEYCODE_BUTTON_B;//exit/back
+    final static int X        = KeyEvent.KEYCODE_BUTTON_X;
+    final static int Y        = KeyEvent.KEYCODE_BUTTON_Y;
+    final static int LT       = KeyEvent.KEYCODE_BUTTON_L1;
+    final static int RT       = KeyEvent.KEYCODE_BUTTON_R1;
+
+    //special action buttons (for menus and pause)
+    final static int PAUSE    = KeyEvent.KEYCODE_BUTTON_START;
+    final static int MENU     = KeyEvent.KEYCODE_BUTTON_SELECT;//not all controllers?
+    //NB. paused and ACTION is MENU?
+    final static int BACK     = KeyEvent.KEYCODE_BUTTON_B;//easy check back
+    final static int ACTION   = KeyEvent.KEYCODE_BUTTON_A;
+
+    static int directionPressed = -1; // initialized to -1
+
+    public static int getDirectionPressed(InputEvent event) {
+        if (!isDpadDevice(event)) {
+            return -1;
+        }
+
+        // If the input event is a MotionEvent, check its hat axis values.
+        if (event instanceof MotionEvent) {
+
+            // Use the hat axis value to find the D-pad direction
+            MotionEvent motionEvent = (MotionEvent) event;
+            float xaxis = motionEvent.getAxisValue(MotionEvent.AXIS_HAT_X);
+            float yaxis = motionEvent.getAxisValue(MotionEvent.AXIS_HAT_Y);
+
+            // Check if the AXIS_HAT_X value is -1 or 1, and set the D-pad
+            // LEFT and RIGHT direction accordingly.
+            if (Float.compare(xaxis, -1.0f) == 0) {
+                directionPressed =  LEFT;
+            } else if (Float.compare(xaxis, 1.0f) == 0) {
+                directionPressed =  RIGHT;
+            }
+            // Check if the AXIS_HAT_Y value is -1 or 1, and set the D-pad
+            // UP and DOWN direction accordingly.
+            else if (Float.compare(yaxis, -1.0f) == 0) {
+                directionPressed =  UP;
+            } else if (Float.compare(yaxis, 1.0f) == 0) {
+                directionPressed =  DOWN;
+            }
+        }
+
+        // If the input event is a KeyEvent, check its key code.
+        else if (event instanceof KeyEvent) {
+
+            // Use the key code to find the D-pad direction.
+            KeyEvent keyEvent = (KeyEvent) event;
+            if (keyEvent.getKeyCode() == KeyEvent.KEYCODE_DPAD_LEFT) {
+                directionPressed = LEFT;
+            } else if (keyEvent.getKeyCode() == KeyEvent.KEYCODE_DPAD_RIGHT) {
+                directionPressed = RIGHT;
+            } else if (keyEvent.getKeyCode() == KeyEvent.KEYCODE_DPAD_UP) {
+                directionPressed = UP;
+            } else if (keyEvent.getKeyCode() == KeyEvent.KEYCODE_DPAD_DOWN) {
+                directionPressed = DOWN;
+            }
+        }
+        return directionPressed;
+    }
+
+    public static boolean isKey(InputEvent event, int keyCode, boolean paused) {
+        if (event instanceof KeyEvent) {
+            KeyEvent k = (KeyEvent)event;
+            if(k.getRepeatCount() == 0) {
+                int c = k.getKeyCode();
+                if(c == CENTER) c = A;//primary action android suggestion
+                if(c == KeyEvent.KEYCODE_MENU) c = MENU;//map suggestion
+                if(c == KeyEvent.KEYCODE_BUTTON_L2) c = LT;//map suggestion
+                if(c == KeyEvent.KEYCODE_BUTTON_R2) c = RT;//map suggestion
+                if(paused && c == A) c = MENU;//if no SELECT button?
+                if(c == keyCode) return true;
+            }
+        }
+        return false;
+    }
+
+    public static float joystickXL(MotionEvent event) {
+        InputDevice inputDevice = event.getDevice();
+        // Calculate the horizontal distance to move by
+        // using the input value from one of these physical controls:
+        // the left control stick, hat axis.
+        float x = getCenteredAxis(event, inputDevice,
+                MotionEvent.AXIS_X);
+        if (x == 0) {
+            x = getCenteredAxis(event, inputDevice,
+                    MotionEvent.AXIS_HAT_X);
+        }
+        return x;
+    }
+
+    public static float joystickYL(MotionEvent event) {
+        InputDevice inputDevice = event.getDevice();
+        // Calculate the vertical distance to move by
+        // using the input value from one of these physical controls:
+        // the left control stick, hat switch.
+        float y = getCenteredAxis(event, inputDevice,
+                MotionEvent.AXIS_Y);
+        if (y == 0) {
+            y = getCenteredAxis(event, inputDevice,
+                    MotionEvent.AXIS_HAT_Y);
+        }
+        return y;
+    }
+
+    public static float joystickXR(MotionEvent event) {
+        InputDevice inputDevice = event.getDevice();
+        // Calculate the horizontal distance to move by
+        // using the input value from one of these physical controls:
+        // the left control stick, hat axis.
+        float x = getCenteredAxis(event, inputDevice,
+                MotionEvent.AXIS_Z);
+        return x;
+    }
+
+    public static float joystickYR(MotionEvent event) {
+        InputDevice inputDevice = event.getDevice();
+        // Calculate the vertical distance to move by
+        // using the input value from one of these physical controls:
+        // the left control stick, hat switch.
+        float y = getCenteredAxis(event, inputDevice,
+                MotionEvent.AXIS_RZ);
+        return y;
+    }
+
     //================================= PACKAGED
+    static float getCenteredAxis(MotionEvent event,
+                                         InputDevice device, int axis) {
+        final InputDevice.MotionRange range =
+                device.getMotionRange(axis, event.getSource());
+
+        // A joystick at rest does not always report an absolute position of
+        // (0,0). Use the getFlat() method to determine the range of values
+        // bounding the joystick axis center.
+        if (range != null) {
+            final float flat = range.getFlat();
+            final float value = event.getAxisValue(axis);
+
+            // Ignore axis values that are within the 'flat' region of the
+            // joystick axis center.
+            if (Math.abs(value) > flat) {
+                return value;
+            }
+        }
+        return 0;
+    }
+
+    static boolean isDpadDevice(InputEvent event) {
+        // Check that input comes from a device with directional pads.
+        if ((event.getSource() & InputDevice.SOURCE_DPAD)
+                != InputDevice.SOURCE_DPAD) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
     static String getPrefRemote(String key, String unset) {
         if(config != null) return config.getString(key);
         return unset;
