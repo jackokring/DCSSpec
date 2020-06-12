@@ -94,7 +94,8 @@ public class MySurface extends SurfaceView implements Callback {
         y *= UtilStatic.height;
         drawing.drawRect(x, y, x + UtilStatic.width,
                 y + UtilStatic.height, bg);
-        drawing.drawBitmap(font[ch], x, y, blend);
+        //default to 2K characters leaving 112 unused egg
+        drawing.drawBitmap(font[ch & 2047], x, y, blend);
         invalidate();
     }
 
