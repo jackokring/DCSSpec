@@ -336,6 +336,10 @@ public class UtilStatic {
             if(c == KeyEvent.KEYCODE_ALT_RIGHT) c = B;
             if(c == KeyEvent.KEYCODE_SHIFT_RIGHT) c = X;
             if(c == KeyEvent.KEYCODE_SLASH) c = Y;
+            if(c == KeyEvent.KEYCODE_A) c = A;
+            if(c == KeyEvent.KEYCODE_B) c = B;
+            if(c == KeyEvent.KEYCODE_X) c = X;
+            if(c == KeyEvent.KEYCODE_Y) c = Y;
             if(c == KeyEvent.KEYCODE_ESCAPE) c = MENU;
             if(c == KeyEvent.KEYCODE_COMMA) c = L1;
             if(c == KeyEvent.KEYCODE_PERIOD) c = R1;
