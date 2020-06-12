@@ -248,15 +248,31 @@ public class UtilStatic {
     //special action buttons (for menus and pause)
     public static int PAUSE    = KeyEvent.KEYCODE_BUTTON_START;
     public static int MENU     = KeyEvent.KEYCODE_BUTTON_SELECT;//not all controllers?
+    public static int META     = KeyEvent.KEYCODE_META_LEFT;
     //NB. paused and ACTION is MENU?
     public static int BACK     = B;//back (shield)
     public static int ACTION   = A;//order (attack/fire)
     public static int SCAN     = X;//warning (hazard/seek)
     public static int INFO     = Y;//information (status)
 
+    public final static String SUP       = "UP";
+    public final static String SDOWN     = "DOWN";
+    public final static String SLEFT     = "LEFT";
+    public final static String SRIGHT    = "RIGHT";
+
+    public final static String SBACK     = "B-Cross";
+    public final static String SACTION   = "A-Circle";
+    public final static String SSCAN     = "X-Triangle";
+    public final static String SINFO     = "Y-Square";
+    public final static String SPAUSE    = "START";
+    public final static String SMENU     = "SELECT";
+
+    public final static String SL1       = "LEFT TRIGGER";
+    public final static String SR1       = "RIGHT TRIGGER";
+
     static int directionPressed = -1; // initialized to -1
 
-    public static void initCheapGenericHID() {
+    public static void initCheapGenericHID1() {//SNES USB
         A        = KeyEvent.KEYCODE_BUTTON_4;//primary
         B        = KeyEvent.KEYCODE_BUTTON_3;//exit/back
         X        = KeyEvent.KEYCODE_BUTTON_2;
@@ -270,24 +286,52 @@ public class UtilStatic {
         PAUSE    = KeyEvent.KEYCODE_BUTTON_8;
         MENU     = KeyEvent.KEYCODE_BUTTON_7;//not all controllers?
         //NB. paused and ACTION is MENU?
-        BACK     = B;//easy check back
-        ACTION   = A;
-        SCAN     = X;
-        INFO     = Y;
+        fixButtons();
+    }
+
+    public static void initCheapGenericHID2() {//PS1 USB / Logitech USB
+        A        = KeyEvent.KEYCODE_BUTTON_3;//primary
+        B        = KeyEvent.KEYCODE_BUTTON_2;//exit/back
+        X        = KeyEvent.KEYCODE_BUTTON_4;
+        Y        = KeyEvent.KEYCODE_BUTTON_1;
+        L1       = KeyEvent.KEYCODE_BUTTON_5;
+        R1       = KeyEvent.KEYCODE_BUTTON_6;
+        L2       = KeyEvent.KEYCODE_BUTTON_7;
+        R2       = KeyEvent.KEYCODE_BUTTON_8;
+
+        //special action buttons (for menus and pause)
+        PAUSE    = KeyEvent.KEYCODE_BUTTON_10;
+        MENU     = KeyEvent.KEYCODE_BUTTON_9;//not all controllers?
+        //NB. paused and ACTION is MENU?
+        fixButtons();
+    }
+
+    public static void initCheapGenericHID3() {//PS with adapter generic USB
+        A        = KeyEvent.KEYCODE_BUTTON_2;//primary
+        B        = KeyEvent.KEYCODE_BUTTON_3;//exit/back
+        X        = KeyEvent.KEYCODE_BUTTON_1;
+        Y        = KeyEvent.KEYCODE_BUTTON_4;
+        L1       = KeyEvent.KEYCODE_BUTTON_7;
+        R1       = KeyEvent.KEYCODE_BUTTON_8;
+        L2       = KeyEvent.KEYCODE_BUTTON_5;
+        R2       = KeyEvent.KEYCODE_BUTTON_6;
+
+        //special action buttons (for menus and pause)
+        PAUSE    = KeyEvent.KEYCODE_BUTTON_10;
+        MENU     = KeyEvent.KEYCODE_BUTTON_9;//not all controllers?
+        //NB. paused and ACTION is MENU?
+        fixButtons();
     }
 
     public static int getDirectionPressed(InputEvent event) {
-        if (!isDpadDevice(event)) {
-            return -1;
-        }
 
         // If the input event is a MotionEvent, check its hat axis values.
         if (event instanceof MotionEvent) {
-
+            MotionEvent e = (MotionEvent)event;
             // Use the hat axis value to find the D-pad direction
             MotionEvent motionEvent = (MotionEvent) event;
-            float xaxis = motionEvent.getAxisValue(MotionEvent.AXIS_HAT_X);
-            float yaxis = motionEvent.getAxisValue(MotionEvent.AXIS_HAT_Y);
+            float xaxis = joystickXL(e);
+            float yaxis = joystickYL(e);
 
             // Check if the AXIS_HAT_X value is -1 or 1, and set the D-pad
             // LEFT and RIGHT direction accordingly.
@@ -325,18 +369,24 @@ public class UtilStatic {
 
     static KeyEvent lastButton = null;
 
-    public static boolean isButton(InputEvent event, int keyCode, boolean paused) {
-        if (event instanceof KeyEvent) {
-            KeyEvent k = (KeyEvent)event;
-            if(k.getRepeatCount() == 0) {
-                int c = k.getKeyCode();
-                if(c == CENTER) c = A;//primary action android suggestion
-                if(c == KeyEvent.KEYCODE_MENU) c = MENU;//map suggestion
-                if(c == L2) c = L1;//map suggestion
-                if(c == R2) c = R1;//map suggestion
-                if(paused && c == A) c = MENU;//if no SELECT button?
-                if(c == INFO) {
-                    if(lastButton != k) {
+    public static boolean isButton(KeyEvent event, int keyCode, boolean paused,
+                                   boolean downEvent) {
+        KeyEvent k = (KeyEvent)event;
+        if(k.getRepeatCount() == 0) {
+            int c = k.getKeyCode();
+            if(c == CENTER) c = A;//primary action android suggestion
+            if(c == KeyEvent.KEYCODE_MENU) c = MENU;//map suggestion
+            if(c == L2) c = L1;//map suggestion
+            if(c == R2) c = R1;//map suggestion
+            if(paused) {
+                if(c == A) c = MENU;//if no SELECT button?
+                if(c == B) c = BACK;//BACK exits pause
+                if(c == X) c = META;//META for something needing it
+                //with right gaming logic this should make easy pause exit
+            }
+            if(downEvent) {
+                if (c == INFO) {//only key down
+                    if (lastButton != k) {
                         if (lastButton != null && keyCode == PAUSE) {
                             c = PAUSE;//a pause mechanism
                         }
@@ -345,9 +395,9 @@ public class UtilStatic {
                 } else {
                     lastButton = null;
                 }
-                if(c == keyCode)  {
-                    return true;
-                }
+            }
+            if(c == keyCode)  {
+                return true;
             }
         }
         return false;
@@ -402,6 +452,13 @@ public class UtilStatic {
     }
 
     //================================= PACKAGED
+    static void fixButtons() {
+        BACK     = B;//easy check back
+        ACTION   = A;
+        SCAN     = X;
+        INFO     = Y;
+    }
+
     static float getCenteredAxis(MotionEvent event,
                                          InputDevice device, int axis) {
         final InputDevice.MotionRange range =
@@ -421,16 +478,6 @@ public class UtilStatic {
             }
         }
         return 0;
-    }
-
-    static boolean isDpadDevice(InputEvent event) {
-        // Check that input comes from a device with directional pads.
-        if ((event.getSource() & InputDevice.SOURCE_DPAD)
-                != InputDevice.SOURCE_DPAD) {
-            return true;
-        } else {
-            return false;
-        }
     }
 
     static String getPrefRemote(String key, String unset) {
