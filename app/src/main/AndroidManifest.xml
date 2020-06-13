@@ -45,7 +45,7 @@
         </activity>
         <activity
                 android:name=".SurfaceActivity"
-                android:screenOrientation="landscape"
+                android:screenOrientation="portrait"
                 android:configChanges="orientation|keyboardHidden"
                 android:label="@string/surface_activity"
                 android:parentActivityName=".DCSListActivity">

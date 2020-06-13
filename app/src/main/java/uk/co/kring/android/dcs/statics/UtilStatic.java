@@ -127,20 +127,50 @@ public class UtilStatic {
 
     public final static int width = 8;
     public final static int height = 10;
+    public final static int sprite = 16;
+
+    final static Rect destChar = new Rect(0, 0, width, height);
+    final static Rect destSprite = new Rect(0, 0, sprite, sprite);
+    final static Rect destSprite2 =
+            new Rect(0, 0, sprite * 2, sprite * 2);
 
     public static Bitmap getCharBitmap(char ch) {
-        Bitmap b = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
+        //1024 bitmaps
+        //512 characters
+        //256 sprites (higher 256 have double size)
+        //first 32 sprites in each 256 set (totalling 512) are a stretched font
+        //from the highest 32 characters
+        Bitmap b;
+        Rect dest;
+        if(ch < 512) {
+            dest = destChar;
+        } else if(ch < 512 + 256) {
+            dest = destSprite;
+        } else {
+            dest = destSprite2;
+        }
+        b = Bitmap.createBitmap(dest.width(), dest.height(), Bitmap.Config.ARGB_8888);
         Canvas c = new Canvas(b);
-        Rect copyRect = new Rect((ch % 32) * width, (ch / 32) * height,
-                width, height);
-        c.drawBitmap(b, copyRect,
-                new Rect(0, 0, width, height), null);
+        Rect copyRect;
+        if(ch < 512) {
+            copyRect = new Rect((ch % 32) * width, (ch / 32) * height,
+                    width, height);//char
+        } else if(((ch &= 255) >> 5)  == 0) {
+            ch += 512 - 32;
+            copyRect = new Rect((ch % 32) * width, (ch / 32) * height,
+                    width, height);//expand last font line (sprite)
+        } else {
+            //32 -> (x (ok), y (10 * 16)), and sp -= 32
+            ch -= 32;
+            copyRect = new Rect((ch % 16) * sprite, (ch / 16) * sprite + 160,
+                    sprite, sprite);
+        }
+        c.drawBitmap(f, copyRect, destChar, null);//to display
         return b;
     }
 
     public static Bitmap[] getChars() {
-        Bitmap[] arr = new Bitmap[f.getWidth() / width * f.getHeight() / height];
-        //TODO: 1200 -> 1024 and 26 plus 30 (@ 20 * 20)
+        Bitmap[] arr = new Bitmap[1024];
         for(char i = 0; i < arr.length; ++i) {
             arr[i] = getCharBitmap(i);
         }
