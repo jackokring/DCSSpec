@@ -2,12 +2,11 @@ package uk.co.kring.android.dcs;
 
 import android.content.Context;
 import android.graphics.*;
+import android.view.*;
 import androidx.core.graphics.BlendModeColorFilterCompat;
-import android.view.MotionEvent;
-import android.view.SurfaceHolder;
 import android.view.SurfaceHolder.Callback;
-import android.view.SurfaceView;
 import androidx.core.graphics.BlendModeCompat;
+import org.jetbrains.annotations.NotNull;
 import uk.co.kring.android.dcs.statics.UtilStatic;
 
 public class MySurface extends SurfaceView implements Callback {
@@ -42,6 +41,8 @@ public class MySurface extends SurfaceView implements Callback {
         Canvas c = getHolder().lockCanvas();
         draw(c);
         getHolder().unlockCanvasAndPost(c);
+        setFocusable(true);
+        requestFocus();
     }
 
     @Override
@@ -86,6 +87,39 @@ public class MySurface extends SurfaceView implements Callback {
         return true;
     }
 
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        //TODO:
+        return super.onKeyDown(keyCode, event);
+    }
+
+    @Override
+    public boolean onKeyUp(int keyCode, KeyEvent event) {
+        return super.onKeyUp(keyCode, event);
+    }
+
+    @Override
+    public boolean onGenericMotionEvent(@NotNull MotionEvent event) {
+        if (event.isFromSource(InputDevice.SOURCE_CLASS_JOYSTICK)) {
+            if (event.getAction() == MotionEvent.ACTION_MOVE) {
+                // process the joystick movement...
+                return true;
+            }
+        }
+        if (event.isFromSource(InputDevice.SOURCE_CLASS_POINTER)) {
+            switch (event.getAction()) {
+                case MotionEvent.ACTION_HOVER_MOVE:
+                    // process the mouse hover movement...
+                    return true;
+                case MotionEvent.ACTION_SCROLL:
+                    // process the scroll wheel movement...
+                    return true;
+            }
+        }
+        return super.onGenericMotionEvent(event);
+    }
+
+    //surface handling
     public void charAt(char ch, float x, float y, int fColor, int bColor) {
         bg.setColor(bColor);
         blend.setColorFilter(BlendModeColorFilterCompat.createBlendModeColorFilterCompat(
