@@ -302,7 +302,7 @@ public class UtilStatic {
 
     static int directionPressed = -1; // initialized to -1
 
-    public void configJoystick(Context c) {
+    public static void configJoystick(Context c) {
         String j = pref(c, "joystick", "1");
         if(j.compareTo("1") == 0) initCheapGenericHID1();
         if(j.compareTo("2") == 0) initCheapGenericHID2();

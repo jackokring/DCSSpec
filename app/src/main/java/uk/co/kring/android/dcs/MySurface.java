@@ -17,6 +17,7 @@ public class MySurface extends SurfaceView implements Callback {
     Paint blend = new Paint();
     Paint bg = new Paint();
     Rect screenRect, viewRect, bottom, top;
+    boolean isPaused = true;
 
     //============================== PUBLIC INTERFACE
     public MySurface(Context context) {
@@ -31,6 +32,7 @@ public class MySurface extends SurfaceView implements Callback {
             screenRect = new Rect(0, 0, screen.getWidth(), screen.getHeight());
             viewRect = new Rect(0, 0, getWidth(), getHeight());
             defaultZeroWindow();
+            setInput();
         } catch(Exception e) {
             throw new ActivityException(e);
         }
@@ -87,19 +89,71 @@ public class MySurface extends SurfaceView implements Callback {
         return true;
     }
 
+    public final static int UP       = 1;
+    public final static int LEFT     = 2;
+    public final static int RIGHT    = 3;
+    public final static int DOWN     = 4;
+
+    //action buttons
+    public final static int A        = 0;//primary
+    public final static int B        = 1;//exit/back
+    public final static int X        = 2;
+    public final static int Y        = 3;
+    public final static int L1       = 4;
+    public final static int R1       = 5;
+    public final static int MENU     = 6;
+    public final static int PAUSE    = 7;
+    public final static int META     = 8;
+    public final static int ACTION   = 9;
+    public final static int BACK     = 10;
+    public final static int SCAN     = 11;
+    public final static int INFO     = 12;
+
+    public static int[] codes = new int[INFO];
+    public static boolean[] buttons = new boolean[INFO];
+
+    public void setInput() {
+        codes[A] = UtilStatic.A;
+        codes[B] = UtilStatic.B;
+        codes[X] = UtilStatic.X;
+        codes[Y] = UtilStatic.Y;
+        codes[L1] = UtilStatic.L1;
+        codes[R1] = UtilStatic.R1;
+        codes[MENU] = UtilStatic.MENU;
+        codes[PAUSE] = UtilStatic.PAUSE;
+        codes[META] = UtilStatic.META;
+        codes[ACTION] = UtilStatic.ACTION;
+        codes[BACK] = UtilStatic.BACK;
+        codes[SCAN] = UtilStatic.SCAN;
+        codes[INFO] = UtilStatic.INFO;
+        UtilStatic.configJoystick(getContext());
+    }
+
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
-        //TODO:
+        for(int i = 0; i < codes.length; ++i) {
+            if(UtilStatic.isButton(event, codes[i], isPaused, true)) {
+                buttons[i] = true;
+                return true;
+            }
+        }
         return super.onKeyDown(keyCode, event);
     }
 
     @Override
     public boolean onKeyUp(int keyCode, KeyEvent event) {
+        for(int i = 0; i < codes.length; ++i) {
+            if(UtilStatic.isButton(event, codes[i], isPaused, false)) {
+                buttons[i] = false;
+                return true;
+            }
+        }
         return super.onKeyUp(keyCode, event);
     }
 
     @Override
     public boolean onGenericMotionEvent(@NotNull MotionEvent event) {
+        //TODO:
         if (event.isFromSource(InputDevice.SOURCE_CLASS_JOYSTICK)) {
             if (event.getAction() == MotionEvent.ACTION_MOVE) {
                 // process the joystick movement...
