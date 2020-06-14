@@ -141,7 +141,7 @@ public class MySurface extends SurfaceView implements Callback {
             }
         }
         dx = UtilStatic.getDirectionPressedX(event, dx, true);
-        dy = UtilStatic.getDirectionPressedX(event, dy, true);
+        dy = UtilStatic.getDirectionPressedY(event, dy, true);
         return super.onKeyDown(keyCode, event);
     }
 
@@ -154,7 +154,7 @@ public class MySurface extends SurfaceView implements Callback {
             }
         }
         dx = UtilStatic.getDirectionPressedX(event, dx, false);
-        dy = UtilStatic.getDirectionPressedX(event, dy, false);
+        dy = UtilStatic.getDirectionPressedY(event, dy, false);
         return super.onKeyUp(keyCode, event);
     }
 
@@ -163,7 +163,7 @@ public class MySurface extends SurfaceView implements Callback {
         if (event.isFromSource(InputDevice.SOURCE_CLASS_JOYSTICK)) {
             if (event.getAction() == MotionEvent.ACTION_MOVE) {
                 dx = UtilStatic.getDirectionPressedX(event, dx, true);
-                dy = UtilStatic.getDirectionPressedX(event, dy, true);
+                dy = UtilStatic.getDirectionPressedY(event, dy, true);
                 return true;
             }
         }
