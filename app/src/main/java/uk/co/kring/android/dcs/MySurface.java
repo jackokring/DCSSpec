@@ -6,7 +6,6 @@ import android.view.*;
 import androidx.core.graphics.BlendModeColorFilterCompat;
 import android.view.SurfaceHolder.Callback;
 import androidx.core.graphics.BlendModeCompat;
-import org.jetbrains.annotations.NotNull;
 import uk.co.kring.android.dcs.statics.UtilStatic;
 
 public class MySurface extends SurfaceView implements Callback {
@@ -78,10 +77,14 @@ public class MySurface extends SurfaceView implements Callback {
             case MotionEvent.ACTION_DOWN:
             case MotionEvent.ACTION_MOVE:
             case MotionEvent.ACTION_UP:
-                xPos = event.getX() / getWidth() *
+                xPos = (event.getX() / getWidth()) *
                         (float)(screen.getWidth() / UtilStatic.width);
-                yPos = event.getY() / getHeight() *
+                yPos = (event.getY() / getHeight()) *
                         (float)(screen.getHeight() / UtilStatic.height);
+                sxPos = (event.getX() / getWidth()) *
+                        (float)(screen.getWidth() / UtilStatic.sprite);
+                syPos = (event.getY() / getHeight()) *
+                        (float)(screen.getHeight() / UtilStatic.sprite);
                 break;
             default:
                 break;
@@ -137,6 +140,8 @@ public class MySurface extends SurfaceView implements Callback {
                 return true;
             }
         }
+        dx = UtilStatic.getDirectionPressedX(event, dx, true);
+        dy = UtilStatic.getDirectionPressedX(event, dy, true);
         return super.onKeyDown(keyCode, event);
     }
 
@@ -148,26 +153,18 @@ public class MySurface extends SurfaceView implements Callback {
                 return true;
             }
         }
+        dx = UtilStatic.getDirectionPressedX(event, dx, false);
+        dy = UtilStatic.getDirectionPressedX(event, dy, false);
         return super.onKeyUp(keyCode, event);
     }
 
     @Override
-    public boolean onGenericMotionEvent(@NotNull MotionEvent event) {
-        //TODO:
+    public boolean onGenericMotionEvent(MotionEvent event) {
         if (event.isFromSource(InputDevice.SOURCE_CLASS_JOYSTICK)) {
             if (event.getAction() == MotionEvent.ACTION_MOVE) {
-                // process the joystick movement...
+                dx = UtilStatic.getDirectionPressedX(event, dx, true);
+                dy = UtilStatic.getDirectionPressedX(event, dy, true);
                 return true;
-            }
-        }
-        if (event.isFromSource(InputDevice.SOURCE_CLASS_POINTER)) {
-            switch (event.getAction()) {
-                case MotionEvent.ACTION_HOVER_MOVE:
-                    // process the mouse hover movement...
-                    return true;
-                case MotionEvent.ACTION_SCROLL:
-                    // process the scroll wheel movement...
-                    return true;
             }
         }
         return super.onGenericMotionEvent(event);
@@ -279,6 +276,8 @@ public class MySurface extends SurfaceView implements Callback {
 
     float xPosO, yPosO;
     float xPos, yPos;
+    float sxPos, syPos;
+    float dx, dy;
 
     public void setOffsetTouchXY(float x, float y) {
         xPosO = x;
@@ -289,7 +288,23 @@ public class MySurface extends SurfaceView implements Callback {
         return xPos - xPosO;
     }
 
-    public float getTouchY() {
-        return yPos - yPosO;
+    public float getTouchY(boolean bottom) {
+        return yPos - yPosO - (bottom ? (screen.getHeight() / 2F) / UtilStatic.height : 0);
+    }
+
+    public float getMapTouchX() {
+        return sxPos;
+    }
+
+    public float getMapTouchY(boolean bottom) {
+        return syPos - (bottom ? (screen.getHeight() / 2F) / UtilStatic.sprite : 0);
+    }
+
+    public float joyX() {
+        return (float)(dx * ((Math.abs(dy) > 0.1f) ? Math.sqrt(1f / 2f) : 1f));
+    }
+
+    public float joyY() {
+        return (float)(dy * ((Math.abs(dx) > 0.1f) ? Math.sqrt(1f / 2f) : 1f));
     }
 }

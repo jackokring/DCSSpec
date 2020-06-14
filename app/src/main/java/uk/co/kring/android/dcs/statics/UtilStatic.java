@@ -259,10 +259,6 @@ public class UtilStatic {
     }
 
     //directions
-    public final static int UP       = KeyEvent.KEYCODE_DPAD_UP;
-    public final static int LEFT     = KeyEvent.KEYCODE_DPAD_LEFT;
-    public final static int RIGHT    = KeyEvent.KEYCODE_DPAD_RIGHT;
-    public final static int DOWN     = KeyEvent.KEYCODE_DPAD_DOWN;
     public final static int CENTER   = KeyEvent.KEYCODE_DPAD_CENTER;
 
     //action buttons
@@ -300,8 +296,6 @@ public class UtilStatic {
     public final static String SL1       = "L1-,";
     public final static String SR1       = "R1-.";
 
-    static int directionPressed = -1; // initialized to -1
-
     public static void configJoystick(Context c) {
         String j = pref(c, "joystick", "1");
         if(j.compareTo("1") == 0) initCheapGenericHID1();
@@ -310,45 +304,79 @@ public class UtilStatic {
         if(j.compareTo("4") == 0) initCheapGenericHID4();
     }
 
-    public static int getDirectionPressed(InputEvent event) {
-
+    public static float getDirectionPressedX(InputEvent event, float def, boolean down) {
+        float directionPressed = def;
         // If the input event is a MotionEvent, check its hat axis values.
         if (event instanceof MotionEvent) {
             MotionEvent e = (MotionEvent)event;
-            // Use the hat axis value to find the D-pad direction
-            MotionEvent motionEvent = (MotionEvent) event;
             float xaxis = joystickXL(e);
-            float yaxis = joystickYL(e);
 
             // Check if the AXIS_HAT_X value is -1 or 1, and set the D-pad
             // LEFT and RIGHT direction accordingly.
-            if (Float.compare(xaxis, -1.0f) == 0) {
-                directionPressed =  LEFT;
-            } else if (Float.compare(xaxis, 1.0f) == 0) {
-                directionPressed =  RIGHT;
-            }
-            // Check if the AXIS_HAT_Y value is -1 or 1, and set the D-pad
-            // UP and DOWN direction accordingly.
-            else if (Float.compare(yaxis, -1.0f) == 0) {
-                directionPressed =  UP;
-            } else if (Float.compare(yaxis, 1.0f) == 0) {
-                directionPressed =  DOWN;
+            if (Float.compare(xaxis, -0.5f) < 0) {
+                directionPressed = -1;
+            } else if (Float.compare(xaxis, 0.5f) > 0) {
+                directionPressed = 1;
             }
         }
 
         // If the input event is a KeyEvent, check its key code.
         else if (event instanceof KeyEvent) {
+            if(down) {
+                // Use the key code to find the D-pad direction.
+                KeyEvent keyEvent = (KeyEvent) event;
+                if (keyEvent.getKeyCode() == KeyEvent.KEYCODE_DPAD_LEFT) {
+                    directionPressed = -1;
+                } else if (keyEvent.getKeyCode() == KeyEvent.KEYCODE_DPAD_RIGHT) {
+                    directionPressed = 1;
+                }
+            } else {
+                // Use the key code to find the D-pad direction.
+                KeyEvent keyEvent = (KeyEvent) event;
+                if (keyEvent.getKeyCode() == KeyEvent.KEYCODE_DPAD_LEFT) {
+                    directionPressed = 0;
+                } else if (keyEvent.getKeyCode() == KeyEvent.KEYCODE_DPAD_RIGHT) {
+                    directionPressed = 0;
+                }
+            }
+        }
+        return directionPressed;
+    }
 
-            // Use the key code to find the D-pad direction.
-            KeyEvent keyEvent = (KeyEvent) event;
-            if (keyEvent.getKeyCode() == KeyEvent.KEYCODE_DPAD_LEFT) {
-                directionPressed = LEFT;
-            } else if (keyEvent.getKeyCode() == KeyEvent.KEYCODE_DPAD_RIGHT) {
-                directionPressed = RIGHT;
-            } else if (keyEvent.getKeyCode() == KeyEvent.KEYCODE_DPAD_UP) {
-                directionPressed = UP;
-            } else if (keyEvent.getKeyCode() == KeyEvent.KEYCODE_DPAD_DOWN) {
-                directionPressed = DOWN;
+    public static float getDirectionPressedY(InputEvent event, float def, boolean down) {
+        float directionPressed = def;
+        // If the input event is a MotionEvent, check its hat axis values.
+        if (event instanceof MotionEvent) {
+            MotionEvent e = (MotionEvent)event;
+            float yaxis = joystickYL(e);
+
+            // Check if the AXIS_HAT_Y value is -1 or 1, and set the D-pad
+            // UP and DOWN direction accordingly.
+            if (Float.compare(yaxis, -0.5f) < 0) {
+                directionPressed = -1;
+            } else if (Float.compare(yaxis, 0.5f) > 0) {
+                directionPressed = 1;
+            }
+        }
+
+        // If the input event is a KeyEvent, check its key code.
+        else if (event instanceof KeyEvent) {
+            if(down) {
+                // Use the key code to find the D-pad direction.
+                KeyEvent keyEvent = (KeyEvent) event;
+                if (keyEvent.getKeyCode() == KeyEvent.KEYCODE_DPAD_UP) {
+                    directionPressed = -1;
+                } else if (keyEvent.getKeyCode() == KeyEvent.KEYCODE_DPAD_DOWN) {
+                    directionPressed = 1;
+                }
+            } else {
+                // Use the key code to find the D-pad direction.
+                KeyEvent keyEvent = (KeyEvent) event;
+                if (keyEvent.getKeyCode() == KeyEvent.KEYCODE_DPAD_UP) {
+                    directionPressed = 0;
+                } else if (keyEvent.getKeyCode() == KeyEvent.KEYCODE_DPAD_DOWN) {
+                    directionPressed = 0;
+                }
             }
         }
         return directionPressed;
