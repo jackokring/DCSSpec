@@ -1,3 +1,5 @@
+package uk.co.kring.android.dcs.jndsk.WavFile;
+
 import java.io.*;
 
 public class WriteExample

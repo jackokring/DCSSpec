@@ -7,7 +7,7 @@
 // http://www.blitter.com/~russtopia/MIDI/~jglatt/tech/wave.htm
 
 // Version 1.0
-package uk.co.kring.android.dcs.mvm.WavFile;
+package uk.co.kring.android.dcs.jndsk.WavFile;
 
 import java.io.*;
 

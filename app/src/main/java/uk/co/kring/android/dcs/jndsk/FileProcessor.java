@@ -1,4 +1,4 @@
-package uk.co.kring.android.dcs.mvm;
+package uk.co.kring.android.dcs.jndsk;
 
 import java.io.IOException;
 import java.io.InputStream;

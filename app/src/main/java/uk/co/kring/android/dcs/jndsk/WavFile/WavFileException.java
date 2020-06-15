@@ -1,4 +1,4 @@
-package uk.co.kring.android.dcs.mvm.WavFile;
+package uk.co.kring.android.dcs.jndsk.WavFile;
 
 public class WavFileException extends Exception {
 	public WavFileException(String message) {

@@ -9,7 +9,7 @@ import android.webkit.MimeTypeMap;
 import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
 import androidx.core.content.FileProvider;
-import uk.co.kring.android.dcs.mvm.FileProcessor;
+import uk.co.kring.android.dcs.jndsk.FileProcessor;
 import uk.co.kring.android.dcs.statics.UtilStatic;
 
 import java.io.*;
