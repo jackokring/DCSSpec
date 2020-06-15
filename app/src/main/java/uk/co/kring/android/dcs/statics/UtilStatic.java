@@ -126,7 +126,7 @@ public class UtilStatic {
     }
 
     public final static int width = 8;
-    public final static int height = 10;
+    public final static int height = 12;
     public final static int sprite = 16;
 
     final static Rect destChar = new Rect(0, 0, width, height);
@@ -142,9 +142,9 @@ public class UtilStatic {
         //from the highest 32 characters
         Bitmap b;
         Rect dest;
-        if(ch < 512) {
+        if(ch < 512 - 32 * 4) {
             dest = destChar;
-        } else if(ch < 512 + 256) {
+        } else if(ch < 512 + 256) {//middle set scale
             dest = destSprite;
         } else {
             dest = destSprite2;
@@ -152,17 +152,18 @@ public class UtilStatic {
         b = Bitmap.createBitmap(dest.width(), dest.height(), Bitmap.Config.ARGB_8888);
         Canvas c = new Canvas(b);
         Rect copyRect;
-        if(ch < 512) {
+        if(ch < 512 - 32 * 4) {
             copyRect = new Rect((ch % 32) * width, (ch / 32) * height,
                     width, height);//char
-        } else if(((ch &= 255) >> 5)  == 0) {
-            ch += 512 - 32;
+        } else if(ch < 512) {
+            ch -= 32 * 4;
             copyRect = new Rect((ch % 32) * width, (ch / 32) * height,
-                    width, height);//expand last font line (sprite)
+                    width, height);//expand last font lines (sprite)
         } else {
-            //32 -> (x (ok), y (10 * 16)), and sp -= 32
-            ch -= 32;
-            copyRect = new Rect((ch % 16) * sprite, (ch / 16) * sprite + 160,
+            //sprite y adjust
+            final int adj = 12 * 12;
+            ch &= 255;
+            copyRect = new Rect((ch % 16) * sprite, (ch / 16) * sprite + adj,
                     sprite, sprite);
         }
         c.drawBitmap(f, copyRect, destChar, null);//to display
