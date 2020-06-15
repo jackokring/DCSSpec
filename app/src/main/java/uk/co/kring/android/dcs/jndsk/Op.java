@@ -6,24 +6,44 @@ package uk.co.kring.android.dcs.jndsk;
 //then have a base library
 public class Op {
 
-    /*
-    00 (0x00)    nop
+    public static final Exec[] codes = {
+        //the list of reduced executor classes
+        null//NOP?
+    };
 
-01 (0x01)    aconst_null
-02 (0x02)    iconst_m1
-03 (0x03)    iconst_0
-04 (0x04)    iconst_1
-05 (0x05)    iconst_2
-06 (0x06)    iconst_3
-07 (0x07)    iconst_4
-08 (0x08)    iconst_5
-09 (0x09)    lconst_0
-10 (0x0a)    lconst_1
-11 (0x0b)    fconst_0
-12 (0x0c)    fconst_1
-13 (0x0d)    fconst_2
-14 (0x0e)    dconst_0
-15 (0x0f)    dconst_1
+    //00 (0x00)    nop
+    public static final char NOP = 0;
+    //01 (0x01)    aconst_null
+    public static final char NULL = 1;
+    //02 (0x02)    iconst_m1
+    public static final char M1 = 2;
+    //03 (0x03)    iconst_0
+    public static final char I0 = 3;
+    //04 (0x04)    iconst_1
+    public static final char I1 = 4;
+    //05 (0x05)    iconst_2
+    public static final char I2 = 5;
+    //06 (0x06)    iconst_3
+    public static final char I3 = 6;
+    //07 (0x07)    iconst_4
+    public static final char I4 = 7;
+    //08 (0x08)    iconst_5
+    public static final char I5 = 8;
+    //09 (0x09)    lconst_0
+    public static final char I6 = 9;
+    //10 (0x0a)    lconst_1
+    public static final char I7 = 10;
+    //11 (0x0b)    fconst_0
+    public static final char F0 = 11;
+    //12 (0x0c)    fconst_1
+    public static final char F1 = 12;
+    //13 (0x0d)    fconst_2
+    public static final char F2 = 13;
+    //14 (0x0e)    dconst_0
+    public static final char D0 = 14;
+    //15 (0x0f)    dconst_1
+    public static final char D1 = 15;
+    /*
 16 (0x10)    bipush
 17 (0x11)    sipush
 18 (0x12)    ldc
