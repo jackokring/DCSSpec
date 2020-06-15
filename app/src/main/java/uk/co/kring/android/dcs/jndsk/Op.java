@@ -8,7 +8,13 @@ public class Op {
 
     public static final Exec[] codes = {
         //the list of reduced executor classes
-        null//NOP?
+        new Exec(), new Exec.PushI(0), new Exec.PushI(-1), new Exec.PushIC(0),
+        new Exec.PushIC(1), new Exec.PushIC(2), new Exec.PushIC(3),
+        new Exec.PushIC(4), new Exec.PushIC(5), new Exec.PushIC(6),
+        new Exec.PushIC(7), new Exec.PushLC(0), new Exec.PushLC(1),
+        //fs and ds
+            new Exec.PushIC(8), new Exec.PushIC(9), new Exec.PushIC(10),
+            new Exec.PushLC(2), new Exec.PushLC(3) //using ints
     };
 
     //00 (0x00)    nop
@@ -30,9 +36,9 @@ public class Op {
     //08 (0x08)    iconst_5
     public static final char I5 = 8;
     //09 (0x09)    lconst_0
-    public static final char I6 = 9;
+    public static final char L0 = 9;
     //10 (0x0a)    lconst_1
-    public static final char I7 = 10;
+    public static final char L1 = 10;
     //11 (0x0b)    fconst_0
     public static final char F0 = 11;
     //12 (0x0c)    fconst_1
